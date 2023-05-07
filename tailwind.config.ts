@@ -8,17 +8,21 @@ export default {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      animation: {
+        'fade-in-up': 'fade-in-up 0.1s ease-out',
+      },
+      keyframes: {
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'scale(0.95)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
       },
     },
   },
   plugins: [daisyui],
   daisyui: {
     logs: false,
-    themes: ['black'],
-    darkTheme: 'black',
+    themes: ['forest'],
+    darkTheme: 'forest',
   },
 } satisfies Config
