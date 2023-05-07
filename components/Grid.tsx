@@ -17,15 +17,15 @@ export const Grid = ({
 }: Props) => {
   return (
     <div
-      className={`grow w-full flex flex-col justify-start items-start bg-neutral gap-3 p-3 ${
+      className={`grow w-full flex flex-col justify-start items-start bg-neutral gap-3 p-3 col-span-1 ${
         span5
-          ? 'col-span-5'
+          ? 'lg:col-span-5'
           : span4
-          ? 'col-span-4'
+          ? 'lg:col-span-4'
           : span3
-          ? 'col-span-3'
+          ? 'lg:col-span-3'
           : span2
-          ? 'col-span-2'
+          ? 'lg:col-span-2'
           : ''
       }`}
     >

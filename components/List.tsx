@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const List = ({ children }: Props) => {
-  const { data, isLoading, keyword, setKeyword } = useBangumi()
+  const { data, keyword, setKeyword, updated } = useBangumi()
   const [currentBangumi, setCurrentBangumi] = useState<BangumiT>()
   const [pageCount, setPageCount] = useState(1)
 
@@ -44,6 +44,10 @@ export const List = ({ children }: Props) => {
       }
     }
   }, [currentBangumi])
+
+  useEffect(() => {
+    document.title = `MA7 ${updated}`
+  }, [updated])
 
   return (
     <div className="w-full h-screen flex flex-col gap-3">

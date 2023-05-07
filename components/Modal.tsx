@@ -19,7 +19,7 @@ export const Modal = ({ item, setItem }: Props) => {
       >
         ✕
       </button>
-      <div className="flex justify-start items-start gap-3">
+      <div className="flex flex-col lg:flex-row justify-start items-center lg:items-start gap-3">
         <div className="shrink-0">
           {item ? (
             <Image
@@ -30,11 +30,11 @@ export const Modal = ({ item, setItem }: Props) => {
             />
           ) : null}
         </div>
-        <div className="grid grid-cols-5 gap-[1px] bg-neutral">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-[1px] bg-neutral">
           <Grid
             label={
               item ? (
-                <span className="inline-block mb-2">
+                <span className="inline-block mb-2 truncate">
                   <div className="badge">{item.id}</div>
                   {item.title}
                 </span>
