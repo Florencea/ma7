@@ -1,0 +1,24 @@
+name: Update Data
+on:
+  # GitHub Actions use UTC time, so 21:00 means 5:00 UTC +8 Timezone
+  schedule:
+    - cron: '0 20 * * *'
+  workflow_dispatch:
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: NODE_ENV=production npm ci
+      - run: NODE_ENV=production node lib/crawler.mjs
+      - name: Update data to main branch
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add data/*
+          git commit -m "actions: update data"
+          git push
