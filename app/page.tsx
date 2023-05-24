@@ -1,22 +1,22 @@
-'use client'
-import hash from '@emotion/hash'
-import { useEffect, useState } from 'react'
-import { PASSWORD, SALT } from '../constants/constants'
+"use client";
+import hash from "@emotion/hash";
+import { useEffect, useState } from "react";
+import { PASSWORD, SALT } from "../constants/constants";
 
 export default function Page() {
-  const [pasword, setPassword] = useState('')
+  const [pasword, setPassword] = useState("");
 
   useEffect(() => {
-    const hashPassword = hash(`${SALT}${pasword}`)
-    if (window.localStorage.getItem('cf-ma-sec') === PASSWORD) {
-      window.location.replace(`/${PASSWORD}`)
+    const hashPassword = hash(`${SALT}${pasword}`);
+    if (window.localStorage.getItem("cf-ma-sec") === PASSWORD) {
+      window.location.replace(`/${PASSWORD}`);
     }
 
     if (hashPassword === PASSWORD) {
-      window.localStorage.setItem('cf-ma-sec', PASSWORD)
-      window.location.replace(`/${PASSWORD}`)
+      window.localStorage.setItem("cf-ma-sec", PASSWORD);
+      window.location.replace(`/${PASSWORD}`);
     }
-  }, [pasword])
+  }, [pasword]);
 
   return (
     <main className="w-screen h-screen flex justify-center items-center">
@@ -28,5 +28,5 @@ export default function Page() {
         onChange={(e) => setPassword(e.target.value)}
       />
     </main>
-  )
+  );
 }

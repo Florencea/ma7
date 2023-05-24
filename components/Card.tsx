@@ -1,25 +1,25 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import { BangumiT } from '../hooks/useBangumi'
+import Image from "next/image";
+import { BangumiT } from "../hooks/useBangumi";
 
 interface Props {
-  item: BangumiT
-  setItem: (item: BangumiT) => void
-  isFirst?: boolean
-  updated?: string
+  item: BangumiT;
+  setItem: (item: BangumiT) => void;
+  isFirst?: boolean;
+  updated?: string;
 }
 
 export const GET_STATUS_TEXT = (bangumi?: BangumiT) =>
   bangumi?.end
-    ? '已完結'
-    : `連載至 ${bangumi?.episodes[bangumi?.episodes.length - 1]?.title}`
+    ? "已完結"
+    : `連載至 ${bangumi?.episodes[bangumi?.episodes.length - 1]?.title}`;
 
 export const Card = ({
   item,
   setItem,
   isFirst = false,
-  updated = '',
+  updated = "",
 }: Props) => {
   return (
     <div className="indicator">
@@ -36,7 +36,7 @@ export const Card = ({
       >
         <figure className="select-none">
           <Image
-            src={`/img/${item.img.split('/').pop()}.avif`}
+            src={`/img/${item.img.split("/").pop()}.avif`}
             alt={item.title}
             width={250}
             height={350}
@@ -54,5 +54,5 @@ export const Card = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

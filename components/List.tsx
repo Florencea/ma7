@@ -1,53 +1,53 @@
-'use client'
-import { useSize } from 'ahooks'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroller'
-import { LAZYLOAD_PADDING } from '../constants/constants'
-import useBangumi, { BangumiT } from '../hooks/useBangumi'
-import { Card } from './Card'
-import { Modal } from './Modal'
+"use client";
+import { useSize } from "ahooks";
+import { useEffect, useMemo, useRef, useState } from "react";
+import InfiniteScroll from "react-infinite-scroller";
+import { LAZYLOAD_PADDING } from "../constants/constants";
+import useBangumi, { BangumiT } from "../hooks/useBangumi";
+import { Card } from "./Card";
+import { Modal } from "./Modal";
 
 interface Props {
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
 
 export const List = ({ children }: Props) => {
-  const { data, keyword, setKeyword, updated } = useBangumi()
-  const [currentBangumi, setCurrentBangumi] = useState<BangumiT>()
-  const [pageCount, setPageCount] = useState(1)
+  const { data, keyword, setKeyword, updated } = useBangumi();
+  const [currentBangumi, setCurrentBangumi] = useState<BangumiT>();
+  const [pageCount, setPageCount] = useState(1);
 
-  const modalRef = useRef<HTMLDialogElement>(null)
-  const sizeRef = useRef<HTMLDivElement>(null)
-  const size = useSize(sizeRef)
+  const modalRef = useRef<HTMLDialogElement>(null);
+  const sizeRef = useRef<HTMLDivElement>(null);
+  const size = useSize(sizeRef);
 
   const cardsPerRow = useMemo(() => {
     if (size !== undefined) {
-      return Math.floor(size.width / 250)
+      return Math.floor(size.width / 250);
     } else {
-      return 8
+      return 8;
     }
-  }, [size])
+  }, [size]);
 
   const pageData = useMemo(
     () => data.slice(0, pageCount * cardsPerRow),
-    [data, pageCount, cardsPerRow],
-  )
+    [data, pageCount, cardsPerRow]
+  );
 
   useEffect(() => {
     if (modalRef.current !== null) {
       if (currentBangumi) {
-        modalRef.current.showModal()
-        document.body.style.overflow = 'hidden'
+        modalRef.current.showModal();
+        document.body.style.overflow = "hidden";
       } else {
-        modalRef.current.close()
-        document.body.style.overflow = 'auto'
+        modalRef.current.close();
+        document.body.style.overflow = "auto";
       }
     }
-  }, [currentBangumi])
+  }, [currentBangumi]);
 
   useEffect(() => {
-    document.title = `MA7 ${updated}`
-  }, [updated])
+    document.title = `MA7 ${updated}`;
+  }, [updated]);
 
   return (
     <div className="w-full h-screen flex flex-col gap-3">
@@ -87,5 +87,5 @@ export const List = ({ children }: Props) => {
         <Modal item={currentBangumi} setItem={setCurrentBangumi} />
       </dialog>
     </div>
-  )
-}
+  );
+};

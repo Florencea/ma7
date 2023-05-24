@@ -1,11 +1,11 @@
-import Image from 'next/image'
-import { BangumiT } from '../hooks/useBangumi'
-import { GET_STATUS_TEXT } from './Card'
-import { Grid } from './Grid'
+import Image from "next/image";
+import { BangumiT } from "../hooks/useBangumi";
+import { GET_STATUS_TEXT } from "./Card";
+import { Grid } from "./Grid";
 
 interface Props {
-  item?: BangumiT
-  setItem: (item?: BangumiT) => void
+  item?: BangumiT;
+  setItem: (item?: BangumiT) => void;
 }
 
 export const Modal = ({ item, setItem }: Props) => {
@@ -14,7 +14,7 @@ export const Modal = ({ item, setItem }: Props) => {
       <button
         className="btn btn-sm btn-circle absolute right-2 top-2"
         onClick={() => {
-          setItem(undefined)
+          setItem(undefined);
         }}
       >
         ✕
@@ -23,8 +23,8 @@ export const Modal = ({ item, setItem }: Props) => {
         <div className="shrink-0">
           {item ? (
             <Image
-              src={`/img/${item?.img.split('/').pop()}.avif`}
-              alt={item?.title ?? ''}
+              src={`/img/${item?.img.split("/").pop()}.avif`}
+              alt={item?.title ?? ""}
               width={250}
               height={350}
             />
@@ -39,7 +39,7 @@ export const Modal = ({ item, setItem }: Props) => {
                   {item.title}
                 </span>
               ) : (
-                ''
+                ""
               )
             }
             span5
@@ -48,13 +48,13 @@ export const Modal = ({ item, setItem }: Props) => {
           </Grid>
           <Grid label="播出集數">
             {item?.totalEpisodes === -1
-              ? '未定'
+              ? "未定"
               : item?.totalEpisodes.toLocaleString()}
           </Grid>
           <Grid label="首播日期">{item?.roadshow}</Grid>
           <Grid label="觀看次數">{item?.view.toLocaleString()}</Grid>
           <Grid label="留言數">{item?.comment.toLocaleString()}</Grid>
-          <Grid label="原著作者">{item?.originalAuthor.join('/')}</Grid>
+          <Grid label="原著作者">{item?.originalAuthor.join("/")}</Grid>
           <Grid label="作品類型" span2>
             {item?.genre.map((g, i) => (
               <span className="badge" key={i}>
@@ -83,5 +83,5 @@ export const Modal = ({ item, setItem }: Props) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};

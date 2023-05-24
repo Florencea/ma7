@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-          cache: 'npm'
+          cache: "npm"
       - run: NODE_ENV=production npm ci
       - run: NODE_ENV=production node lib/crawler.mjs
       - name: Update data to main branch
