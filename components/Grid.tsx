@@ -17,7 +17,7 @@ export const Grid = ({
 }: Props) => {
   return (
     <div
-      className={`grow w-full flex flex-col justify-start items-start bg-neutral gap-3 p-3 col-span-1 ${
+      className={`grow w-full flex flex-col justify-start items-start gap-3 p-3 col-span-1 ${
         span5
           ? "lg:col-span-5"
           : span4

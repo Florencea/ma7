@@ -22,7 +22,7 @@ export default {
   plugins: [daisyui],
   daisyui: {
     logs: false,
-    themes: ["forest"],
-    darkTheme: "forest",
+    themes: ["black"],
+    darkTheme: "black",
   },
 } satisfies Config;

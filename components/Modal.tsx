@@ -30,12 +30,12 @@ export const Modal = ({ item, setItem }: Props) => {
             />
           ) : null}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-[1px] bg-neutral">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-[1px]">
           <Grid
             label={
               item ? (
                 <span className="inline-block mb-2 truncate">
-                  <div className="badge">{item.id}</div>
+                  <div className="badge text-lg">{item.id}</div>
                   {item.title}
                 </span>
               ) : (
@@ -57,7 +57,7 @@ export const Modal = ({ item, setItem }: Props) => {
           <Grid label="原著作者">{item?.originalAuthor.join("/")}</Grid>
           <Grid label="作品類型" span2>
             {item?.genre.map((g, i) => (
-              <span className="badge" key={i}>
+              <span className="badge bg-transparent border-none" key={i}>
                 {g}
               </span>
             ))}
@@ -67,14 +67,14 @@ export const Modal = ({ item, setItem }: Props) => {
               {item?.site}
             </a>
           </Grid>
-          <Grid label="">
+          <Grid label="播放">
             <a
-              className="btn btn-sm btn-circle btn-outline"
+              className="btn btn-sm btn-outline rounded-full"
               target="_blank"
               rel="noreferrer"
               href={`https://myself-bbs.com/thread-${item?.id}-1-1.html`}
             >
-              ▶
+              myself site ▶
             </a>
           </Grid>
           <Grid label="簡介" span5>
