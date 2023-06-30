@@ -1,8 +1,8 @@
 name: Update Data
 on:
   # GitHub Actions use UTC time, so 21:00 means 5:00 UTC +8 Timezone
-  # schedule:
-  # - cron: '0 20 * * *'
+  schedule:
+    - cron: "0 20 * * *"
   workflow_dispatch:
 jobs:
   update:
