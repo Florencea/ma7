@@ -12,7 +12,7 @@ export const Modal = ({ item, setItem }: Props) => {
   return (
     <>
       <button
-        className="btn btn-sm btn-circle absolute right-2 top-2"
+        className="btn btn-sm bg-transparent border-none absolute right-2 top-2"
         onClick={() => {
           setItem(undefined);
         }}
@@ -34,16 +34,16 @@ export const Modal = ({ item, setItem }: Props) => {
           <Grid
             label={
               item ? (
-                <span className="inline-block mb-2 truncate">
-                  <div className="badge text-lg">{item.id}</div>
-                  {item.title}
-                </span>
+                <span className="inline-block mb-2 truncate">{item.title}</span>
               ) : (
                 ""
               )
             }
             span5
           >
+            <div className="badge bg-transparent border-none">
+              ID: {item?.id}
+            </div>
             {GET_STATUS_TEXT(item)}
           </Grid>
           <Grid label="播出集數">
@@ -69,7 +69,7 @@ export const Modal = ({ item, setItem }: Props) => {
           </Grid>
           <Grid label="播放">
             <a
-              className="btn btn-sm btn-outline rounded-full"
+              className="btn btn-sm btn-outline"
               target="_blank"
               rel="noreferrer"
               href={`https://myself-bbs.com/thread-${item?.id}-1-1.html`}

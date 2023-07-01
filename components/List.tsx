@@ -55,7 +55,7 @@ export const List = ({ children }: Props) => {
         <input
           type="text"
           placeholder="搜尋"
-          className="input input-bordered w-full max-w-xs bg-slate-900 rounded-full"
+          className="input input-bordered w-full max-w-xs bg-[#0d0d0d]"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
         />
@@ -82,7 +82,7 @@ export const List = ({ children }: Props) => {
       </div>
       <dialog
         ref={modalRef}
-        className="backdrop:backdrop-blur-sm transition-all duration-300 animate-fade-in-up rounded-lg p-6 w-[90vw] max-w-[1200px]"
+        className="backdrop:backdrop-blur-sm p-6 w-[90vw] max-w-[1200px] animate-fade-in-up"
       >
         <Modal item={currentBangumi} setItem={setCurrentBangumi} />
       </dialog>

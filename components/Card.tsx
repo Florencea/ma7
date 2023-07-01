@@ -23,7 +23,7 @@ export const Card = ({
 }: Props) => {
   return (
     <div
-      className="card bg-slate-900 shrink-0 w-[250px] cursor-pointer hover:brightness-110 transition-all duration-300 ease-in-out animate-fade-in-up rounded-lg"
+      className="card shrink-0 w-[250px] cursor-pointer"
       key={item.id}
       onClick={() => setItem(item)}
     >
