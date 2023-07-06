@@ -30,7 +30,7 @@ export const List = ({ children }: Props) => {
 
   const pageData = useMemo(
     () => data.slice(0, pageCount * cardsPerRow),
-    [data, pageCount, cardsPerRow]
+    [data, pageCount, cardsPerRow],
   );
 
   useEffect(() => {

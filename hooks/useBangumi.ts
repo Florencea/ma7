@@ -39,7 +39,7 @@ const useBangumi = () => {
       const res = await fetch("/data.json");
       return res.json();
     },
-    {}
+    {},
   );
 
   const [keyword, setKeyword] = useState("");
@@ -51,7 +51,7 @@ const useBangumi = () => {
           (b) =>
             b.title.toLowerCase().includes(keyword.toLowerCase()) ||
             b.info.toLowerCase().includes(keyword.toLowerCase()) ||
-            `${b.id}`.toLowerCase().includes(keyword.toLowerCase())
+            `${b.id}`.toLowerCase().includes(keyword.toLowerCase()),
         )
         .sort((a, b) => {
           // not end or hasUpdate first
@@ -68,7 +68,7 @@ const useBangumi = () => {
           // default by id reverse
           return b.id - a.id;
         }),
-    [data, keyword]
+    [data, keyword],
   );
 
   return {
