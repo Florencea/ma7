@@ -29,6 +29,7 @@ export const Card = ({
     >
       <figure className="select-none">
         <Image
+          className="rounded-lg"
           src={`/img/${item.img.split("/").pop()}.avif`}
           alt={item.title}
           width={250}

@@ -23,7 +23,7 @@ export default function Page() {
       <input
         type="text"
         placeholder="PASSWORD"
-        className="input input-bordered w-full max-w-xs bg-[#0d0d0d]"
+        className="input input-bordered w-full max-w-xs bg-[#0d0d0d] rounded-lg"
         value={pasword}
         onChange={(e) => setPassword(e.target.value)}
       />

@@ -29,7 +29,7 @@ export const Grid = ({
           : ""
       }`}
     >
-      <h3 className="text-lg font-bold flex justify-start items-center gap-3">
+      <h3 className="text-lg font-bold flex justify-start items-center gap-3 w-full">
         {label}
       </h3>
       <div className="w-full text-sm leading-6">{children}</div>
