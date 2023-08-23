@@ -1,3 +1,3 @@
-export default function imgProxy({ src }) {
-  return new URL(src, "https://ma7.pages.dev").toString();
+export default function imgProxy({ src, width }) {
+  return new URL(`${src}?w=${width}`, "https://ma7.pages.dev").toString();
 }
