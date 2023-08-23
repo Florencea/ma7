@@ -3,7 +3,9 @@ const nextConfig = {
   output: "export",
   reactStrictMode: true,
   images: {
-    unoptimized: true,
+    loaderFile:
+      process.env.NODE_ENV === "production" ? undefined : "imgProxy.js",
+    unoptimized: process.env.NODE_ENV === "production",
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",

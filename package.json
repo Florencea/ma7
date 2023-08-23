@@ -1,9 +1,9 @@
 {
   "private": true,
   "scripts": {
-    "dev": "dotenv next dev",
-    "build": "dotenv next build",
-    "lint": "dotenv next lint",
+    "dev": "NEXT_TELEMETRY_DISABLED=1 next dev",
+    "build": "NEXT_TELEMETRY_DISABLED=1 next build",
+    "lint": "NEXT_TELEMETRY_DISABLED=1 next lint",
     "format": "prettier '**/*' --write --ignore-unknown --cache",
     "crawl": "node lib/crawler.mjs"
   },
@@ -22,8 +22,7 @@
     "@types/react-infinite-scroller": "^1.2.3",
     "ahooks": "^3.7.8",
     "autoprefixer": "^10.4.15",
-    "daisyui": "^3.5.1",
-    "dotenv-cli": "^7.3.0",
+    "daisyui": "^3.6.1",
     "eslint": "^8.47.0",
     "eslint-config-next": "^13.4.19",
     "eslint-config-prettier": "^9.0.0",
