@@ -5,7 +5,8 @@
     "build": "NEXT_TELEMETRY_DISABLED=1 next build",
     "lint": "NEXT_TELEMETRY_DISABLED=1 next lint",
     "format": "prettier '**/*' --write --ignore-unknown --cache",
-    "crawl": "node lib/crawler.mjs"
+    "crawl": "node lib/crawler.mjs",
+    "getimgs": "node lib/getImgs.mjs"
   },
   "dependencies": {
     "crawler": "^1.4.0",
