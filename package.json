@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "crawler": "^1.4.0",
-    "dayjs": "^1.11.9"
+    "dayjs": "^1.11.10"
   },
   "devDependencies": {
     "@emotion/hash": "^0.9.1",
@@ -23,11 +23,11 @@
     "@types/react-infinite-scroller": "^1.2.3",
     "ahooks": "^3.7.8",
     "autoprefixer": "^10.4.15",
-    "daisyui": "^3.7.5",
+    "daisyui": "^3.7.6",
     "eslint": "^8.49.0",
-    "eslint-config-next": "^13.4.19",
+    "eslint-config-next": "^13.5.1",
     "eslint-config-prettier": "^9.0.0",
-    "next": "^13.4.19",
+    "next": "^13.5.1",
     "postcss": "^8.4.30",
     "prettier": "^3.0.3",
     "react": "^18.2.0",
