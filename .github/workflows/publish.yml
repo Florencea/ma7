@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 18
           cache: "npm"
-      - run: NODE_ENV=production npm ci
+      - run: npm ci
       - run: NODE_ENV=production npm run getimgs && NODE_ENV=production npm run build
       - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
