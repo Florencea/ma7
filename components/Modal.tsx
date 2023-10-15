@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { BangumiT } from "../hooks/useBangumi";
-import { GET_STATUS_TEXT } from "./Card";
+import { GET_STATUS_TEXT_LONG } from "./Card";
 import { Grid } from "./Grid";
 
 interface Props {
@@ -45,24 +45,10 @@ export const Modal = ({ item, setItem }: Props) => {
             <div className="badge bg-transparent border-none">
               ID: {item?.id}
             </div>
-            {GET_STATUS_TEXT(item)}
-          </Grid>
-          <Grid label="播出集數">
-            {item?.totalEpisodes === -1
-              ? "未定"
-              : item?.totalEpisodes.toLocaleString()}
+            {GET_STATUS_TEXT_LONG(item)}
           </Grid>
           <Grid label="首播日期">{item?.roadshow}</Grid>
-          <Grid label="觀看次數">{item?.view.toLocaleString()}</Grid>
-          <Grid label="留言數">{item?.comment.toLocaleString()}</Grid>
           <Grid label="原著作者">{item?.originalAuthor.join("/")}</Grid>
-          <Grid label="作品類型" span2>
-            {item?.genre.map((g, i) => (
-              <span className="badge bg-transparent border-none" key={i}>
-                {g}
-              </span>
-            ))}
-          </Grid>
           <Grid label="官方網站" span2>
             <a
               target="_blank"

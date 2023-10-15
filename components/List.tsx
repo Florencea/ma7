@@ -7,11 +7,7 @@ import useBangumi, { BangumiT } from "../hooks/useBangumi";
 import { Card } from "./Card";
 import { Modal } from "./Modal";
 
-interface Props {
-  children?: React.ReactNode;
-}
-
-export const List = ({ children }: Props) => {
+export const List = () => {
   const { data, keyword, setKeyword, updated } = useBangumi();
   const [currentBangumi, setCurrentBangumi] = useState<BangumiT>();
   const [pageCount, setPageCount] = useState(1);

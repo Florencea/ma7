@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 
 export interface EpisodeT {
   title: string;
-  id: string;
 }
 
 export interface ResBangumiT {
@@ -14,15 +13,10 @@ export interface ResBangumiT {
 export interface BangumiT {
   id: number;
   title: string;
-  img_small: string;
   img: string;
   latest: number;
   end: boolean;
-  comment: number;
-  view: number;
-  created: string;
   info: string;
-  genre: string[];
   roadshow: string;
   totalEpisodes: number;
   originalAuthor: string[];
