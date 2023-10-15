@@ -22,7 +22,6 @@ export interface BangumiT {
   originalAuthor: string[];
   site: string;
   updated: string;
-  hasUpdate: boolean;
   episodes: EpisodeT[];
 }
 
@@ -48,12 +47,9 @@ const useBangumi = () => {
             `${b.id}`.toLowerCase().includes(keyword.toLowerCase()),
         )
         .sort((a, b) => {
-          // not end or hasUpdate first
+          // not end first
           if (a.end !== b.end) {
             return a.end ? 1 : -1;
-          }
-          if (a.hasUpdate !== b.hasUpdate) {
-            return a.hasUpdate ? -1 : 1;
           }
           // then by updated
           if (a.updated !== b.updated) {

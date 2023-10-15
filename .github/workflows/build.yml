@@ -28,16 +28,9 @@ jobs:
           echo "NPM_VERSION=$(npm -v)" >> $GITHUB_ENV
       - name: Intall Dependencies
         run: npm ci
-      - name: Update Bangumi data
+      - name: Get Bangumi data
         run: npm run crawl
-      - name: Push Bangumi data to main branch
-        run: |
-          git config user.name ${{ github.actor }}
-          git config user.email ${{ secrets.USER_EMAIL }}
-          git add public/*
-          git commit -m 'actions:${{ github.event_name }}: update data'
-          git push
-      - name: Update Bangumi Images
+      - name: Get Bangumi Images
         run: npm run getimgs
       - name: Build site
         run: npm run build
