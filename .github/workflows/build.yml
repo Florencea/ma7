@@ -1,0 +1,46 @@
+name: Update Data And Publish Site
+on:
+  push:
+    branches:
+      - "main"
+  # GitHub Actions use UTC time, so 21:00 means 5:00 UTC +8 Timezone
+  schedule:
+    - cron: "0 20 * * *"
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: ".nvmrc"
+          check-latest: true
+          cache: "npm"
+      - name: Intall Dependencies
+        run: npm ci
+      - name: Update Bangumi data
+        run: npm run crawl
+      - name: Push Bangumi data to main branch
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add public/*
+          git commit -m "actions: update data"
+          git push
+      - name: Update Bangumi Images
+        run: npm run getimgs
+      - name: Build site
+        run: npm run build
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: f335dee5609bac21c6bdf7b9a0a68b9d
+          projectName: ma7
+          directory: out
