@@ -30,8 +30,6 @@ jobs:
         run: npm ci
       - name: Get Bangumi data
         run: npm run crawl
-      - name: Get Bangumi Images
-        run: npm run getimgs
       - name: Build site
         run: npm run build
       - name: Publish to Cloudflare Pages

@@ -5,8 +5,7 @@
     "build": "NEXT_TELEMETRY_DISABLED=1 next build",
     "lint": "NEXT_TELEMETRY_DISABLED=1 next lint",
     "format": "prettier '**/*' --write --ignore-unknown --cache",
-    "crawl": "node lib/crawler.mjs",
-    "getimgs": "node lib/getImgs.mjs"
+    "crawl": "node lib/crawler.mjs"
   },
   "dependencies": {
     "@tanstack/query-sync-storage-persister": "^4.36.1",
