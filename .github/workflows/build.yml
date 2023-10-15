@@ -32,10 +32,10 @@ jobs:
         run: npm run crawl
       - name: Push Bangumi data to main branch
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name ${{ github.actor }}
+          git config user.email ${{ secrets.USER_EMAIL }}
           git add public/*
-          git commit -m "actions: update data"
+          git commit -m 'actions:${{ github.event_name }}: update data'
           git push
       - name: Update Bangumi Images
         run: npm run getimgs
