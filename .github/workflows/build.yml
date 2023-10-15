@@ -16,15 +16,16 @@ jobs:
       - name: Setup jq
         uses: dcarbone/install-jq-action@v2.0.2
       - name: Get Latest Node.js LTS version
-        run: |
-          NODE_VERSION="$(curl -fsSL https://nodejs.org/download/release/index.json | jq -cr 'last( sort_by( .date | split("-") | map(tonumber) ) | .[] | select(.lts) ) | .version')"
-          echo "use node $NODE_VERSION"
-          echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
+        run: echo "NODE_VERSION=$(curl -fsSL https://nodejs.org/download/release/index.json | jq -cr 'last( sort_by( .date | split("-") | map(tonumber) ) | .[] | select(.lts) ) | .version')" >> $GITHUB_ENV
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
+      - name: Setup npm
+        run: |
+          curl -fsSL https://www.npmjs.com/install.sh | sh
+          echo "NPM_VERSION=$(npm -v)" >> $GITHUB_ENV
       - name: Intall Dependencies
         run: npm ci
       - name: Update Bangumi data
