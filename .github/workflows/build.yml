@@ -24,6 +24,12 @@ jobs:
           cache: "npm"
       - name: Setup npm
         run: |
+          npm config set --global audit=false
+          npm config set --global fund=false
+          npm config set --global loglevel=error
+          npm config set --global update-notifier=false
+          npm config set --global engine-strict=true
+          npm config set --global save=true
           curl -fsSL https://www.npmjs.com/install.sh | sh
           echo "NPM_VERSION=$(npm -v)" >> $GITHUB_ENV
       - name: Intall Dependencies
