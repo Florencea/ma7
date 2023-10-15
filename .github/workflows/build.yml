@@ -10,17 +10,20 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+      - name: Setup jq
+        uses: dcarbone/install-jq-action@v2
+      - name: Get Latest Node.js LTS version
+        run: |
+          NODE_VERSION="$(curl -fsSL https://nodejs.org/download/release/index.json | jq -cr 'last( sort_by( .date | split("-") | map(tonumber) ) | .[] | select(.lts) ) | .version')"
+          echo "use node $NODE_VERSION"
+          echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version-file: ".nvmrc"
-          check-latest: true
+          node-version: env.NODE_VERSION
           cache: "npm"
       - name: Intall Dependencies
         run: npm ci
