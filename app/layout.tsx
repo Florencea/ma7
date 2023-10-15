@@ -1,4 +1,7 @@
+import dynamic from "next/dynamic";
 import "tailwindcss/tailwind.css";
+
+const Providers = dynamic(() => import("./providers"), { ssr: false });
 
 export default function RootLayout({
   children,
@@ -13,7 +16,9 @@ export default function RootLayout({
         <meta name="description" content="MA7" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
