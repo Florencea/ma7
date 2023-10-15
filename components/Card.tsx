@@ -7,7 +7,6 @@ interface Props {
   item: BangumiT;
   setItem: (item: BangumiT) => void;
   isFirst?: boolean;
-  updated?: string;
 }
 
 export const GET_STATUS_TEXT_LONG = (bangumi?: BangumiT) =>
@@ -24,12 +23,7 @@ export const GET_STATUS_TEXT = (bangumi?: BangumiT) =>
     ? "已完結"
     : `連載至 ${bangumi?.episodes[bangumi?.episodes.length - 1]?.title}`;
 
-export const Card = ({
-  item,
-  setItem,
-  isFirst = false,
-  updated = "",
-}: Props) => {
+export const Card = ({ item, setItem, isFirst = false }: Props) => {
   return (
     <div
       className="card shrink-0 w-[250px] cursor-pointer"
