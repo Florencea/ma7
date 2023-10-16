@@ -14,7 +14,6 @@ export interface BangumiT {
   id: number;
   title: string;
   img: string;
-  latest: number;
   end: boolean;
   info: string;
   roadshow: string;
