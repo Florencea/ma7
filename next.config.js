@@ -1,15 +1,25 @@
+const isDev = !(process.env.NODE_ENV === "production");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
+  output: isDev ? undefined : "export",
   reactStrictMode: true,
   images: {
-    loaderFile:
-      process.env.NODE_ENV === "production" ? undefined : "imgProxy.js",
-    unoptimized: process.env.NODE_ENV === "production",
+    loaderFile: isDev ? "imgProxy.js" : undefined,
+    unoptimized: !isDev,
   },
   compiler: {
-    removeConsole: process.env.NODE_ENV === "production",
+    removeConsole: !isDev,
   },
+  redirects: isDev
+    ? async () => [
+        {
+          source: "/data.json",
+          destination: "https://ma7.pages.dev/data.json",
+          permanent: true,
+        },
+      ]
+    : undefined,
 };
 
 module.exports = nextConfig;
