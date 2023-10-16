@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { BangumiT } from "../hooks/useBangumi";
-import { GET_STATUS_TEXT_LONG } from "./Card";
 import { Grid } from "./Grid";
 
 interface Props {
@@ -45,7 +44,7 @@ export const Modal = ({ item, setItem }: Props) => {
             <div className="badge bg-transparent border-none">
               ID: {item?.id}
             </div>
-            {GET_STATUS_TEXT_LONG(item)}
+            {item?.statusTextLong}
           </Grid>
           <Grid label="首播日期">{item?.roadshow}</Grid>
           <Grid label="原著作者">{item?.originalAuthor.join("/")}</Grid>

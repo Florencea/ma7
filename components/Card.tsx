@@ -9,20 +9,6 @@ interface Props {
   isFirst?: boolean;
 }
 
-export const GET_STATUS_TEXT_LONG = (bangumi?: BangumiT) =>
-  bangumi?.end
-    ? "已完結"
-    : `連載至 ${bangumi?.episodes[bangumi?.episodes.length - 1]?.title}${
-        (bangumi?.totalEpisodes ?? -1) < 0
-          ? " (總集數未定)"
-          : ` (共 ${bangumi?.totalEpisodes} 話)`
-      }`;
-
-export const GET_STATUS_TEXT = (bangumi?: BangumiT) =>
-  bangumi?.end
-    ? "已完結"
-    : `連載至 ${bangumi?.episodes[bangumi?.episodes.length - 1]?.title}`;
-
 export const Card = ({ item, setItem, isFirst = false }: Props) => {
   return (
     <div
@@ -49,9 +35,9 @@ export const Card = ({ item, setItem, isFirst = false }: Props) => {
         </div>
         <div
           className="tooltip cursor-pointer select-none"
-          data-tip={GET_STATUS_TEXT(item)}
+          data-tip={item.statusText}
         >
-          <p className="truncate w-full text-left">{GET_STATUS_TEXT(item)}</p>
+          <p className="truncate w-full text-left">{item.statusText}</p>
         </div>
       </div>
     </div>

@@ -21,8 +21,9 @@ export interface BangumiT {
   totalEpisodes: number;
   originalAuthor: string[];
   site: string;
+  statusTextLong: string;
+  statusText: string;
   updated: string;
-  episodes: EpisodeT[];
 }
 
 const useBangumi = () => {
