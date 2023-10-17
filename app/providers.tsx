@@ -19,7 +19,7 @@ export default function Providers({ children }: Props) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            cacheTime: Infinity,
+            gcTime: Infinity,
             retry: false,
           },
         },

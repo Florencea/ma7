@@ -26,14 +26,13 @@ export interface BangumiT {
 }
 
 const useBangumi = () => {
-  const { data, isLoading } = useQuery<ResBangumiT>(
-    ["bangumi"],
-    async () => {
+  const { data, isLoading } = useQuery<ResBangumiT>({
+    queryKey: ["bangumi"],
+    queryFn: async () => {
       const res = await fetch("/data.json");
       return res.json();
     },
-    {},
-  );
+  });
 
   const [keyword, setKeyword] = useState("");
 
