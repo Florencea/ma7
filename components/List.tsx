@@ -54,7 +54,7 @@ export const List = () => {
       </div>
       <div className="w-full flex flex-col justify-start items-center">
         <InfiniteScroll
-          pageStart={0}
+          pageStart={1}
           loadMore={setPageCount}
           hasMore={pageData.length < data.length}
           threshold={LAZYLOAD_PADDING}
