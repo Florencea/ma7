@@ -8,7 +8,7 @@ import { Card } from "./Card";
 import { Modal } from "./Modal";
 
 export const List = () => {
-  const { data, keyword, setKeyword, updated } = useBangumi();
+  const { data, keyword, setKeyword } = useBangumi();
   const [currentBangumi, setCurrentBangumi] = useState<BangumiT>();
   const [pageCount, setPageCount] = useState(1);
 
@@ -40,10 +40,6 @@ export const List = () => {
       }
     }
   }, [currentBangumi]);
-
-  useEffect(() => {
-    document.title = `MA7 ${updated}`;
-  }, [updated]);
 
   return (
     <div className="w-full h-screen flex flex-col gap-3">
