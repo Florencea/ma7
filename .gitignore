@@ -36,3 +36,4 @@ next-env.d.ts
 
 # data
 public/img
+public/data.json
