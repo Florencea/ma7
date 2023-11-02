@@ -11,29 +11,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Setup jq
-        uses: dcarbone/install-jq-action@v2.0.2
-      - name: Get Latest Node.js LTS version
-        run: echo "NODE_VERSION=$(curl -fsSL https://nodejs.org/download/release/index.json | jq -cr 'last( sort_by( .date | split("-") | map(tonumber) ) | .[] | select(.lts) ) | .version')" >> $GITHUB_ENV
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: 18
           cache: "npm"
-      - name: Setup npm
-        run: |
-          npm install --audit false --fund false --loglevel error --progress false --global true npm
-          echo "NPM_VERSION=$(npm -v)" >> $GITHUB_ENV
-      - name: Intall Dependencies
-        run: npm ci
-      - name: Get Bangumi data
-        run: npm run crawl
-      - name: Build site
-        run: npm run build
-      - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+      - run: npm ci
+      - run: npm run crawl
+      - run: npm run build
+      - uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: f335dee5609bac21c6bdf7b9a0a68b9d
