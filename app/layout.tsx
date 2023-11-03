@@ -1,15 +1,18 @@
-import dynamic from "next/dynamic";
-import "tailwindcss/tailwind.css";
-
-const Providers = dynamic(() => import("./providers"), { ssr: false });
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="bg-black text-white">
+    <html
+      lang="en"
+      style={{
+        backgroundColor: "black",
+        color: "white",
+        fontSize: 14,
+        lineHeight: 1.5,
+      }}
+    >
       <head>
         <meta charSet="utf-8" />
         <title>MA7</title>
@@ -17,7 +20,7 @@ export default function RootLayout({
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <main>{children}</main>
       </body>
     </html>
   );

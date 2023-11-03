@@ -1,85 +1,140 @@
-import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
-import { BangumiT } from "../hooks/useBangumi";
+import { BangumiT } from "./useBangumi";
 
 interface Props {
   item: BangumiT;
   open: boolean;
   setItem: Dispatch<SetStateAction<BangumiT | undefined>>;
-  isFirst?: boolean;
 }
 
-export const Card = ({ item, setItem, open, isFirst = false }: Props) => {
+export const Card = ({ item, setItem, open }: Props) => {
   return (
     <div
-      className="transition-all shrink-0"
       style={{
+        flexShrink: 0,
         gridColumn: open ? "span 4" : undefined,
         gridRow: open ? "span 3" : undefined,
+        userSelect: open ? undefined : "none",
       }}
     >
       {!open ? (
         <>
-          <figure
-            className="relative select-none cursor-pointer"
-            style={{ width: 125, height: 170 }}
+          <picture
+            style={{
+              width: 125,
+              height: 175,
+              position: "relative",
+              userSelect: "none",
+              cursor: "pointer",
+            }}
             onClick={() => setItem(open ? undefined : item)}
           >
-            <Image
+            <source
+              srcSet={`/img/${item.img.split("/").pop()}.avif`}
+              type="image/avif"
+            />
+            <img
               src={`/img/${item.img.split("/").pop()}.avif`}
               alt={item.title}
-              priority={isFirst}
-              sizes="125px"
-              fill
+              style={{ width: 125, height: 175 }}
             />
-          </figure>
-          <h2 className="text-sm truncate mt-2 select-none" title={item.title}>
+          </picture>
+          <div
+            style={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+            title={item.title}
+          >
             {item.title}
-          </h2>
-          <p
-            className="text-sm truncate w-full text-left select-none"
+          </div>
+          <div
+            style={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
             title={item.statusText}
           >
             {item.statusText}
-          </p>
+          </div>
         </>
       ) : (
-        <div className="relative h-full flex flex-col gap-3">
-          <div className="flex gap-3">
-            <figure
-              className="relative select-none shrink-0 cursor-pointer"
-              style={{ width: 250, height: 350 }}
+        <div
+          style={{
+            position: "relative",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+          }}
+        >
+          <div style={{ display: "flex", gap: 12 }}>
+            <picture
+              style={{
+                width: 250,
+                height: 350,
+                position: "relative",
+                userSelect: "none",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
               onClick={() => setItem(open ? undefined : item)}
             >
-              <Image
+              <source
+                srcSet={`/img/${item.img.split("/").pop()}.avif`}
+                type="image/avif"
+              />
+              <img
                 src={`/img/${item.img.split("/").pop()}.avif`}
                 alt={item.title}
-                priority={isFirst}
-                sizes="250px"
-                fill
+                style={{ width: 250, height: 350 }}
               />
-            </figure>
-            <div className="grow flex flex-col justify-between gap-2 border border-gray-400 text-sm p-3">
-              <div className="grow flex flex-col gap-1">
-                <h1>{item.title}</h1>
-                <p>{item.statusTextLong}</p>
-                <p>首播日期: {item.roadshow}</p>
-                <p>原著作者: {item.originalAuthor.join("/")}</p>
-                <p>
+            </picture>
+            <div
+              style={{
+                flexGrow: 1,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                gap: 8,
+                border: "1px solid #fff",
+                padding: 12,
+              }}
+            >
+              <div
+                style={{
+                  flexGrow: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 4,
+                }}
+              >
+                <div>{item.title}</div>
+                <div>{item.statusTextLong}</div>
+                <div>首播日期: {item.roadshow}</div>
+                <div>原著作者: {item.originalAuthor.join("/")}</div>
+                <div>
                   官方網站:{" "}
                   <a
+                    style={{ color: "white" }}
                     target="_blank"
                     rel="noreferrer"
                     href={item.site}
-                    className="hover:underline"
                   >
                     {item.site}
                   </a>
-                </p>
+                </div>
               </div>
-              <div className="flex justify-end">
+              <div style={{ display: "flex", justifyContent: "end" }}>
                 <a
-                  className="text-black bg-white py-3 px-5"
+                  style={{
+                    color: "black",
+                    backgroundColor: "white",
+                    padding: "12px 20px",
+                    textDecoration: "none",
+                  }}
                   target="_blank"
                   rel="noreferrer"
                   href={`https://myself-bbs.com/thread-${item.id}-1-1.html`}
@@ -89,8 +144,15 @@ export const Card = ({ item, setItem, open, isFirst = false }: Props) => {
               </div>
             </div>
           </div>
-          <div className="grow border border-gray-400 p-3 overflow-y-scroll">
-            <p className="text-sm leading-relaxed">{item.info}</p>
+          <div
+            style={{
+              flexGrow: 1,
+              border: "1px solid #fff",
+              padding: 12,
+              overflowY: "scroll",
+            }}
+          >
+            {item.info}
           </div>
         </div>
       )}

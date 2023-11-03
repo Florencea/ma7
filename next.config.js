@@ -4,10 +4,6 @@ const isDev = !(process.env.NODE_ENV === "production");
 const nextConfig = {
   output: isDev ? undefined : "export",
   reactStrictMode: true,
-  images: {
-    loaderFile: isDev ? "imgProxy.js" : undefined,
-    unoptimized: !isDev,
-  },
   compiler: {
     removeConsole: !isDev,
   },
@@ -16,6 +12,11 @@ const nextConfig = {
         {
           source: "/data.json",
           destination: "https://ma7.pages.dev/data.json",
+          permanent: true,
+        },
+        {
+          source: "/img/:path*",
+          destination: "https://ma7.pages.dev/img/:path*",
           permanent: true,
         },
       ]
