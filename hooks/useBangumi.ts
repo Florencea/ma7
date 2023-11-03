@@ -1,5 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useInfiniteScroll } from "ahooks";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { EPISODES_PER_PAGE } from "../constants/constants";
+
+export interface Result {
+  list: BangumiT[];
+  nextIndex: number | undefined;
+  isNoMore: boolean;
+}
 
 export interface EpisodeT {
   title: string;
@@ -40,10 +48,43 @@ const useBangumi = () => {
     [data, keyword],
   );
 
+  const getLoadMoreList = useCallback(
+    (nextIndex: number | undefined, rawData: BangumiT[]): Promise<Result> => {
+      let start = 0;
+      if (nextIndex) {
+        start = nextIndex;
+      }
+      const end = start + EPISODES_PER_PAGE;
+      const list = rawData.slice(start, end);
+      const nIdx = rawData.length >= end ? end : undefined;
+      return new Promise((resolve) => {
+        resolve({
+          list,
+          nextIndex: nIdx,
+          isNoMore: rawData.length > 0 ? rawData.length === list.length : false,
+        });
+      });
+    },
+    [],
+  );
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { data: pageData, reload } = useInfiniteScroll<Result>(
+    (d) => getLoadMoreList(d?.nextIndex, bangumiData),
+    {
+      target: containerRef,
+      isNoMore: (d) => d?.isNoMore ?? false,
+      reloadDeps: [bangumiData],
+    },
+  );
+
   return {
-    data: bangumiData,
+    containerRef,
+    data: pageData?.list ?? [],
     keyword,
     setKeyword,
+    reload,
   };
 };
 

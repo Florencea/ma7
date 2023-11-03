@@ -9,7 +9,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="bg-black">
+    <html lang="en" className="bg-black text-white">
       <head>
         <meta charSet="utf-8" />
         <title>MA7</title>
