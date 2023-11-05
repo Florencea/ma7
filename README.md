@@ -5,4 +5,6 @@
 
 ## Feature
 
-- Search by id, title, info
+- Search on typing by id, title, info
+- No CSS dependency
+- Update daily on 5:00 GMT+8 use Github Actions
