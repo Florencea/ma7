@@ -113,6 +113,7 @@ export const Card = ({ item, setItem, open }: Props) => {
               >
                 <div>{item.title}</div>
                 <div>{item.statusTextLong}</div>
+                <div>ID: {item.id}</div>
                 <div>首播日期: {item.roadshow}</div>
                 <div>原著作者: {item.originalAuthor.join("/")}</div>
                 <div>
