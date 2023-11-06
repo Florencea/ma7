@@ -17,13 +17,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-          cache: "npm"
       - run: npm ci
       - uses: actions/cache@v3
         with:
           path: |
-            node_modules/.imgcache
+            ~/.npm
             ${{ github.workspace }}/.next/cache
+            node_modules/.imgcache
           key: ${{ runner.os }}-cache-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
             ${{ runner.os }}-cache-${{ hashFiles('**/package-lock.json') }}-
