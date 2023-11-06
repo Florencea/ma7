@@ -1,3 +1,4 @@
+import { ConfigurationOptions } from "crawlee";
 import { join } from "node:path";
 import process from "node:process";
 
@@ -7,7 +8,6 @@ export const DB_PATH = join(DB_DIR_PATH, "data.json");
 export const IMG_DIR_PATH = join(DB_DIR_PATH, "img");
 export const CACHE_DIR_PATH = join(__dirname, "node_modules", ".imgcache");
 export const CACHE_FILE_PATH = join(CACHE_DIR_PATH, "cache.txt");
-
 export const DATE_FORMAT = "YYYY-MM-DD";
 export const COUNT_PER_PAGE = 20;
 export const IMAGE_MIMETYPE = [
@@ -17,6 +17,9 @@ export const IMAGE_MIMETYPE = [
   "image/webp",
   "image/bmp",
   "image/gif",
+];
+export const IMAGE_404_LIST = [
+  "https://myself-bbs.com/data/attachment/forum/201607/09/1037264653qk9qn949kgqs.jpg",
 ];
 export const IMAGE_DUPLICATEID_MAP = new Map([[45295, 45299]]);
 export const START_CORRECTION_MAP = new Map([
@@ -36,28 +39,16 @@ export const CRAWLER_CONFIG = {
   requestHandlerTimeoutSecs: 30,
   retryOnBlocked: true,
 };
-export const CRAWLER_OPTIONS = {
-  logLevel: "ERROR",
+export const CRAWLER_OPTIONS: ConfigurationOptions = {
+  logLevel: 1,
   persistStorage: false,
 };
-/**
- * @param {number} i
- */
-export const ONAIR_URL_TEMPLATE = (i) =>
+export const ONAIR_URL_TEMPLATE = (i: number) =>
   `https://myself-bbs.com/forum-133-${i + 1}.html`;
-/**
- * @param {number} i
- */
-export const ENDED_URL_TEMPLATE = (i) =>
+export const ENDED_URL_TEMPLATE = (i: number) =>
   `https://myself-bbs.com/forum-113-${i + 1}.html`;
-/**
- * @param {number} id
- */
-export const BANGUMI_URL_TEMPLATE = (id) =>
+export const BANGUMI_URL_TEMPLATE = (id: number) =>
   `https://myself-bbs.com/thread-${id}-1-1.html`;
-/**
- * @param {number} id
- */
 const ONAIR_URL = "https://myself-bbs.com/forum-133-1.html";
 const ENDED_URL = "https://myself-bbs.com/forum-113-1.html";
 export const INDEX_URL_LIST = [ONAIR_URL, ENDED_URL];

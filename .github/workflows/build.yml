@@ -21,8 +21,12 @@ jobs:
       - run: npm ci
       - uses: actions/cache@v3
         with:
-          path: node_modules/.imgcache
-          key: ${{ runner.os }}-imgcache
+          path: |
+            node_modules/.imgcache
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-cache-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-cache-${{ hashFiles('**/package-lock.json') }}-
       - run: npm run crawl
       - run: npm run build
       - uses: cloudflare/pages-action@v1

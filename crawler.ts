@@ -16,35 +16,29 @@ import {
   DB_DIR_PATH,
   DB_PATH,
   ENDED_URL_TEMPLATE,
+  IMAGE_404_LIST,
   IMAGE_DUPLICATEID_MAP,
   IMAGE_MIMETYPE,
   IMG_DIR_PATH,
   INDEX_URL_LIST,
   ONAIR_URL_TEMPLATE,
   START_CORRECTION_MAP,
-} from "./config.mjs";
+} from "./crawler-config";
 dayjs.extend(CustomParseFormat);
 
 mkdirSync(IMG_DIR_PATH, { recursive: true });
 
-/**
- * @type {Map<number, {
- *  id: number;
- *  end: number;
- *  start: string;
- * }>}
- */
-let GLOBAL_INDEX_DB = new Map();
+type BasicBangumiT = {
+  id: number;
+  end: boolean;
+  start?: string;
+};
+
+let GLOBAL_INDEX_DB: Map<number, BasicBangumiT> = new Map();
 let GLOBAL_MAX_COUNT = 0;
 
-/**
- * @type {Set<string>}
- */
-const GLOBAL_PAGE_URLS_SET = new Set();
-/**
- * @type {Map<string, number>}
- */
-const GLOBAL_IMG_URLS_MAP = new Map();
+const GLOBAL_PAGE_URLS_SET: Set<string> = new Set();
+const GLOBAL_IMG_URLS_MAP: Map<string, number> = new Map();
 
 export function now() {
   const current = new Date();
@@ -61,10 +55,7 @@ export function now() {
   return currentStr;
 }
 
-/**
- * @param {string} content
- */
-export function logger(content) {
+export function logger(content: string) {
   console.info(`${now()} ${content}`);
 }
 
@@ -94,27 +85,17 @@ function saveGlobalIndexDb() {
   logger(`Complete fetch ${GLOBAL_INDEX_DB.size} Bangumis.`);
 }
 
-/**
- * @param {string} index_url
- */
-function isOnAirIndex(index_url) {
+function isOnAirIndex(index_url: string) {
   return index_url.split("-")[2] === "133";
 }
 
-/**
- * @param {string} index_url
- * @param {number} max_page
- */
-function getUrlSequence(index_url, max_page) {
+function getUrlSequence(index_url: string, max_page: number) {
   return isOnAirIndex(index_url)
     ? [...Array(max_page).keys()].map((i) => ONAIR_URL_TEMPLATE(i + 1))
     : [...Array(max_page).keys()].map((i) => ENDED_URL_TEMPLATE(i + 1));
 }
 
-/**
- * @param {cheerio.CheerioAPI} $
- */
-function getMaxPage($) {
+function getMaxPage($: cheerio.CheerioAPI) {
   const max_count_str = $("h1.xs2 > .xs1.xw0.i")
     .find("strong:last-child")
     .text();
@@ -123,66 +104,41 @@ function getMaxPage($) {
   const max_page = Math.ceil(max_count / COUNT_PER_PAGE);
   return max_page;
 }
-
-/**
- * @param {cheerio.CheerioAPI} $
- * @param {cheerio.Element} el
- */
-function getId($, el) {
+function getId($: cheerio.CheerioAPI, el: cheerio.Element) {
   const id_link = $(el).children("a").attr("href");
-  const id_str = id_link.split("-")[1];
+  const id_str = `${id_link}`.split("-")[1];
   const id = parseInt(id_str, 10);
   return id;
 }
 
-/**
- * @param {cheerio.CheerioAPI} $
- * @param {cheerio.Element} el
- */
-function getEnd($, el) {
+function getEnd($: cheerio.CheerioAPI, el: cheerio.Element) {
   const latest_info = $(el).find(".ep_info").text();
   const end_str = latest_info.split(" ")[0];
   return end_str === "全";
 }
 
-/**
- * @param {string} request_url
- */
-function getBangumiId(request_url) {
+function getBangumiId(request_url: string) {
   const id_str = request_url.split("-")[2];
   const id = parseInt(id_str, 10);
   return id;
 }
 
-/**
- * @param {cheerio.CheerioAPI} $
- */
-function getBangumiTitle($) {
+function getBangumiTitle($: cheerio.CheerioAPI) {
   const title = $("title").text().split("【")[0];
   return title;
 }
 
-/**
- * @param {cheerio.CheerioAPI} $
- */
-function getBangumiImg($) {
+function getBangumiImg($: cheerio.CheerioAPI) {
   const img = $(".info_img_box.fl > img").attr("src");
   return `${img}`;
 }
 
-/**
- * @param {cheerio.CheerioAPI} $
- */
-function getBangumiInfo($) {
+function getBangumiInfo($: cheerio.CheerioAPI) {
   const info = $("#info_introduction_text").text();
   return info;
 }
 
-/**
- * @param {number} id
- * @param {cheerio.CheerioAPI} $
- */
-function getBangumiStart(id, $) {
+function getBangumiStart(id: number, $: cheerio.CheerioAPI) {
   if (START_CORRECTION_MAP.has(id)) {
     return `${START_CORRECTION_MAP.get(id)}`;
   } else {
@@ -194,10 +150,7 @@ function getBangumiStart(id, $) {
   }
 }
 
-/**
- * @param {cheerio.CheerioAPI} $
- */
-function getBangumiTotalEpisodes($) {
+function getBangumiTotalEpisodes($: cheerio.CheerioAPI) {
   const totalEpisodes_str = $(".info_info > ul > li:nth-child(3)")
     .text()
     .split(": ")[1];
@@ -208,10 +161,7 @@ function getBangumiTotalEpisodes($) {
   return totalEpisodes;
 }
 
-/**
- * @param {cheerio.CheerioAPI} $
- */
-function getBangumiBy($) {
+function getBangumiBy($: cheerio.CheerioAPI) {
   const by_str = $(".info_info > ul > li:nth-child(4)").text().split(": ")[1];
   const by_arr = by_str.split("／");
   if (by_arr.length > 1) {
@@ -223,26 +173,16 @@ function getBangumiBy($) {
   }
 }
 
-/**
- * @param {cheerio.CheerioAPI} $
- */
-function getBangumiSite($) {
+function getBangumiSite($: cheerio.CheerioAPI) {
   const site = $(".info_info > ul > li:nth-child(5) > a").attr("href");
   return site;
 }
 
-/**
- * @param {string} idStr
- */
-function isValidVideo(idStr) {
+function isValidVideo(idStr: string) {
   return idStr.split("/player/")[0] === "https://v.myself-bbs.com";
 }
 
-/**
- * @param {cheerio.CheerioAPI} $
- * @returns {{ title: string }[]}
- */
-function getBangumiEpisodes($) {
+function getBangumiEpisodes($: cheerio.CheerioAPI) {
   const episodes_arr = $(".main_list li:has(ul)")
     .map((_, el) => {
       const idStr = $(el).find("a[data-href*=myself]").attr("data-href") || "";
@@ -253,16 +193,11 @@ function getBangumiEpisodes($) {
         return { title: "" };
       }
     })
-    .get();
+    .get() as { title: string }[];
   return episodes_arr;
 }
 
-/**
- * @param {boolean} end
- * @param {{ title: string }[]} episodes
- * @param {number} totalEpisodes
- */
-function getBangumiTotal(end, totalEpisodes) {
+function getBangumiTotal(end: boolean, totalEpisodes: number) {
   return end
     ? ""
     : `${
@@ -270,11 +205,7 @@ function getBangumiTotal(end, totalEpisodes) {
       }`;
 }
 
-/**
- * @param {boolean} end
- * @param {{ title: string }[]} episodes
- */
-function getBangumiStat(end, episodes) {
+function getBangumiStat(end: boolean, episodes: { title: string }[]) {
   return end ? "已完結" : `連載至 ${episodes[episodes.length - 1]?.title}`;
 }
 
@@ -284,7 +215,7 @@ const ImageCrawler = new HttpCrawler(
     additionalMimeTypes: IMAGE_MIMETYPE,
     requestHandler: async ({ request, body, response }) => {
       try {
-        const id = GLOBAL_IMG_URLS_MAP.get(request.url);
+        const id = Number(GLOBAL_IMG_URLS_MAP.get(request.url));
         const img = `${id}.avif`;
         const imgPath = join(IMG_DIR_PATH, img);
         const imgCachePath = join(CACHE_DIR_PATH, img);
@@ -299,7 +230,7 @@ const ImageCrawler = new HttpCrawler(
           await sharp(body).toFormat("avif").toFile(imgPath_duplicate);
           await copyFile(imgPath_duplicate, imgCachePath_duplicate);
         }
-      } catch (err) {
+      } catch {
         GLOBAL_IMG_URLS_MAP.delete(request.url);
         logger(
           `ERR: [retry ${request.retryCount}] [${response.statusCode}: ${response.statusMessage}] ${request.url}`,
@@ -323,7 +254,7 @@ const BangumiCrawler = new CheerioCrawler(
       const by = getBangumiBy($);
       const site = getBangumiSite($);
       const episodes = getBangumiEpisodes($);
-      const bangumi_index_data = GLOBAL_INDEX_DB.get(id);
+      const bangumi_index_data = GLOBAL_INDEX_DB.get(id) as BasicBangumiT;
       const total = getBangumiTotal(bangumi_index_data.end, totalEpisodes);
       const stat = getBangumiStat(bangumi_index_data.end, episodes);
       const bangumi_data = {
@@ -337,7 +268,9 @@ const BangumiCrawler = new CheerioCrawler(
         stat,
       };
       GLOBAL_INDEX_DB.set(id, bangumi_data);
-      GLOBAL_IMG_URLS_MAP.set(imgUrl, id);
+      if (!IMAGE_404_LIST.includes(imgUrl)) {
+        GLOBAL_IMG_URLS_MAP.set(imgUrl, id);
+      }
     },
   },
   new Configuration(CRAWLER_OPTIONS),
@@ -374,7 +307,7 @@ const IndexCrawler = new CheerioCrawler(
 /**
  * @returns {string[]}
  */
-function loadCachedImgUrls() {
+function loadCachedImgUrls(): string[] {
   mkdirSync(CACHE_DIR_PATH, { recursive: true });
   if (existsSync(CACHE_FILE_PATH)) {
     const cacheTxt = readFileSync(CACHE_FILE_PATH, { encoding: "utf-8" });
@@ -387,7 +320,7 @@ function loadCachedImgUrls() {
  * @param {string[]} cachedImgUrls
  * @param {string[]} currentImgUrls
  **/
-function pruneImgUrls(cachedImgUrls, currentImgUrls) {
+function pruneImgUrls(cachedImgUrls: string[], currentImgUrls: string[]) {
   const cachedImgUrlsSet = new Set(cachedImgUrls);
   const currentImgUrlsSet = new Set(currentImgUrls);
   const imgUrlsFromCache = [...currentImgUrlsSet].filter((img) =>
@@ -403,10 +336,10 @@ function pruneImgUrls(cachedImgUrls, currentImgUrls) {
 /**
  * @param {string[]} imgUrls
  */
-async function copyImgFromCache(imgUrls) {
+async function copyImgFromCache(imgUrls: string[]) {
   await Promise.all(
     imgUrls.map(async (imgUrl) => {
-      const id = GLOBAL_IMG_URLS_MAP.get(imgUrl);
+      const id = Number(GLOBAL_IMG_URLS_MAP.get(imgUrl));
       const img = `${id}.avif`;
       const source = join(CACHE_DIR_PATH, img);
       const destination = join(IMG_DIR_PATH, img);
@@ -435,7 +368,7 @@ async function copyImgFromCache(imgUrls) {
 /**
  * @param {string[]} imgUrls
  */
-function writeImgUrlsCacheList(imgUrls) {
+function writeImgUrlsCacheList(imgUrls: string[]) {
   const imgUrlsTxt = imgUrls.join("\n");
   writeFileSync(CACHE_FILE_PATH, imgUrlsTxt);
 }
@@ -444,18 +377,15 @@ function writeImgUrlsCacheList(imgUrls) {
  *
  * @param {string[]} currentImgUrls
  */
-async function restoreImgCache(currentImgUrls) {
+async function restoreImgCache(currentImgUrls: string[]) {
   const cachedImgUrls = loadCachedImgUrls();
-  logger(`Load cache list: ${cachedImgUrls.length} images`);
   const { imgUrlsFromCache, imgUrlsFromSource, imgUrlsAll } = pruneImgUrls(
     cachedImgUrls,
     currentImgUrls,
   );
-  logger(`Restore from cache...`);
   await copyImgFromCache(imgUrlsFromCache);
-  logger(`Complete restore ${imgUrlsFromCache.length} images`);
+  logger(`Restore ${imgUrlsFromCache.length} images from cache`);
   writeImgUrlsCacheList(imgUrlsAll);
-  logger(`Complete write ${imgUrlsAll.length} images to cache list`);
   return imgUrlsFromSource;
 }
 
@@ -491,8 +421,8 @@ export default async function crawler() {
         imgsUrlsToFetch.length - (allImgUrlsSize - GLOBAL_IMG_URLS_MAP.size)
       } images`,
     );
-  } catch (err) {
-    logger(`${err.name}: ${err.messsage}\n${err.stack}`);
+  } catch (err: any) {
+    logger(`${err?.name}: ${err?.messsage}\n${err?.stack}`);
   }
 }
 
