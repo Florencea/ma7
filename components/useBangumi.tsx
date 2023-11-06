@@ -114,11 +114,11 @@ const useBangumi = () => {
         }}
         value={keyword}
         onChange={(e) => {
+          setKeyword(e.target.value);
           startTransition(() => {
-            setKeyword(e.target.value);
             setCurrentBangumi(undefined);
+            reload();
           });
-          reload();
         }}
       />
     ),
