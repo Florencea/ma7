@@ -18,13 +18,11 @@ jobs:
         with:
           node-version: 20
           cache: npm
+      - run: npm ci
       - uses: actions/cache@v3
         with:
-          path: |
-            ${{ github.workspace }}/.next/cache
-            ${{ github.workspace }}/node_modules/.imgcache
+          path: node_modules/.imgcache
           key: ${{ runner.os }}-cache
-      - run: npm ci
       - run: npm run crawl
       - run: npm run build
       - uses: cloudflare/pages-action@v1
