@@ -30,6 +30,7 @@ const useBangumi = () => {
   const [, startTransition] = useTransition();
 
   const [keyword, setKeyword] = useState("");
+  const [start, setStart] = useState("-");
 
   const [currentBangumi, setCurrentBangumi] = useState<BangumiT>();
 
@@ -37,12 +38,20 @@ const useBangumi = () => {
     () =>
       (rawData ?? []).filter((b) => {
         const k = keyword.toLowerCase();
-        const bid = `${b.id}`;
         const bti = b.title.toLowerCase();
+        const bby = b.by.toLowerCase();
         const bin = b.info.toLowerCase();
-        return bid.includes(k) || bti.includes(k) || bin.includes(k);
+        const bst = b.start.split("-")[0];
+        const keywordFlag =
+          bby.includes(k) || bti.includes(k) || bin.includes(k);
+        const startFlag = bst === start;
+        if (start === "-") {
+          return keywordFlag;
+        } else {
+          return keywordFlag && startFlag;
+        }
       }),
-    [rawData, keyword],
+    [rawData, keyword, start],
   );
 
   const getList = useCallback(
@@ -83,7 +92,11 @@ const useBangumi = () => {
           overflowY: "scroll",
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(125px, 1fr))",
-          gap: 12,
+          placeItems: "stretch",
+          gap: 8,
+          paddingLeft: 8,
+          paddingRight: 8,
+          boxSizing: "border-box",
         }}
       >
         {data?.list?.map((item, index) => (
@@ -98,18 +111,44 @@ const useBangumi = () => {
     [currentBangumi, data?.list],
   );
 
-  const search = useMemo(
+  const countBox = useMemo(
+    () => (
+      <div
+        style={{
+          width: 50,
+          cursor: "default",
+          userSelect: "none",
+          backgroundColor: "transparent",
+          color: bangumiData.length === rawData?.length ? "gray" : "white",
+          padding: 8,
+          paddingRight: 8,
+          outline: 0,
+          lineHeight: 1,
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <div>▶️</div>
+        <div style={{ textAlign: "right", flexGrow: 1 }}>
+          {bangumiData.length}
+        </div>
+      </div>
+    ),
+    [bangumiData.length, rawData?.length],
+  );
+
+  const keywordSearch = useMemo(
     () => (
       <input
         type="text"
-        placeholder="SEARCH"
+        placeholder="TITLE / AUTHOR / INFO"
         style={{
-          width: 320,
+          width: 200,
           backgroundColor: "transparent",
           color: "white",
-          padding: 12,
+          padding: 8,
           outline: 0,
-          border: "1px solid #fff",
+          border: "1px solid gray",
           lineHeight: 1,
         }}
         value={keyword}
@@ -125,9 +164,93 @@ const useBangumi = () => {
     [keyword, reload, setCurrentBangumi],
   );
 
+  const startYears = useMemo(() => {
+    if (rawData) {
+      return [...new Set(rawData.map((item) => item.start.split("-")[0]))].sort(
+        (a, b) => Number(b) - Number(a),
+      );
+    } else {
+      return [];
+    }
+  }, [rawData]);
+
+  const startSearch = useMemo(
+    () => (
+      <select
+        placeholder="YEARS"
+        style={{
+          appearance: "none",
+          cursor: "pointer",
+          width: 80,
+          backgroundColor: "transparent",
+          color: start === "-" ? "gray" : "white",
+          padding: 8,
+          boxSizing: "border-box",
+          outline: 0,
+          border: "1px solid gray",
+          lineHeight: 1,
+        }}
+        value={start}
+        onChange={(e) => {
+          setStart(e.target.value);
+          startTransition(() => {
+            setCurrentBangumi(undefined);
+            reload();
+          });
+        }}
+      >
+        <option disabled value="-">
+          YEAR
+        </option>
+        {startYears.map((year, idx) => (
+          <option key={idx} value={year}>
+            {year}
+          </option>
+        ))}
+      </select>
+    ),
+    [reload, start, startYears],
+  );
+
+  const resetBtn = useMemo(
+    () => (
+      <button
+        style={{
+          userSelect: "none",
+          appearance: "none",
+          cursor:
+            bangumiData.length === rawData?.length ? "not-allowed" : "pointer",
+          width: 80,
+          backgroundColor: "transparent",
+          color: bangumiData.length === rawData?.length ? "gray" : "white",
+          padding: 8,
+          outline: 0,
+          border:
+            bangumiData.length === rawData?.length
+              ? "1px solid gray"
+              : "1px solid white",
+          lineHeight: 1,
+        }}
+        onClick={() => {
+          setKeyword("");
+          setStart("-");
+          setCurrentBangumi(undefined);
+          reload();
+        }}
+        disabled={bangumiData.length === rawData?.length}
+      >
+        RESET
+      </button>
+    ),
+    [bangumiData.length, rawData?.length, reload],
+  );
+
   return {
     bangumiList,
-    search,
+    countBox,
+    keywordSearch,
+    startSearch,
+    resetBtn,
   };
 };
 

@@ -9,7 +9,7 @@ export default function RootLayout({
       style={{
         backgroundColor: "black",
         color: "white",
-        fontSize: 14,
+        fontSize: 12,
         lineHeight: 1.5,
       }}
     >

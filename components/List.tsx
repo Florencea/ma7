@@ -2,7 +2,8 @@
 import useBangumi from "./useBangumi";
 
 export const List = () => {
-  const { bangumiList, search } = useBangumi();
+  const { bangumiList, countBox, startSearch, keywordSearch, resetBtn } =
+    useBangumi();
 
   return (
     <div
@@ -20,10 +21,15 @@ export const List = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          padding: 16,
+          gap: 8,
+          padding: 8,
+          boxSizing: "border-box",
         }}
       >
-        {search}
+        {countBox}
+        {keywordSearch}
+        {startSearch}
+        {resetBtn}
       </div>
       {bangumiList}
     </div>

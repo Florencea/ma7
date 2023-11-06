@@ -18,6 +18,9 @@ export const Card = ({
     <div
       style={{
         flexShrink: 0,
+        display: "flex",
+        flexDirection: "column",
+        width: open ? undefined : 125,
         gridColumn: open ? "span 4" : undefined,
         gridRow: open ? "span 3" : undefined,
         userSelect: open ? undefined : "none",
@@ -44,6 +47,7 @@ export const Card = ({
           </picture>
           <div
             style={{
+              marginTop: 8,
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -57,6 +61,7 @@ export const Card = ({
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
+              color: "gray",
             }}
             title={bangumi.stat}
           >
@@ -71,6 +76,7 @@ export const Card = ({
             display: "flex",
             flexDirection: "column",
             gap: 12,
+            paddingRight: 4,
           }}
         >
           <div style={{ display: "flex", gap: 12 }}>
@@ -101,6 +107,7 @@ export const Card = ({
                 gap: 8,
                 border: "1px solid #fff",
                 padding: 12,
+                boxSizing: "border-box",
               }}
             >
               <div
@@ -115,7 +122,6 @@ export const Card = ({
                 <div>
                   {bangumi.stat} {bangumi.total}
                 </div>
-                <div>ID: {bangumi.id}</div>
                 <div>首播日期: {bangumi.start}</div>
                 <div>原著作者: {bangumi.by}</div>
                 <div>
@@ -135,14 +141,17 @@ export const Card = ({
                   style={{
                     color: "black",
                     backgroundColor: "white",
-                    padding: "12px 20px",
+                    padding: "8px 12px",
                     textDecoration: "none",
+                    display: "flex",
+                    gap: 4,
                   }}
                   target="_blank"
                   rel="noreferrer"
                   href={`https://myself-bbs.com/thread-${bangumi.id}-1-1.html`}
                 >
-                  前往網頁
+                  <span>▶️</span>
+                  <span>前往網頁</span>
                 </a>
               </div>
             </div>
@@ -153,6 +162,7 @@ export const Card = ({
               border: "1px solid #fff",
               padding: 12,
               overflowY: "scroll",
+              lineHeight: 1.8,
             }}
           >
             {bangumi.info}
