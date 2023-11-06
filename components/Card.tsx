@@ -2,12 +2,18 @@ import { Dispatch, SetStateAction } from "react";
 import { BangumiT } from "./useBangumi";
 
 interface Props {
-  item: BangumiT;
-  open: boolean;
-  setItem: Dispatch<SetStateAction<BangumiT | undefined>>;
+  bangumi: BangumiT;
+  currentBangumiState: [
+    BangumiT | undefined,
+    Dispatch<SetStateAction<BangumiT | undefined>>,
+  ];
 }
 
-export const Card = ({ item, setItem, open }: Props) => {
+export const Card = ({
+  bangumi,
+  currentBangumiState: [currentBangumi, setCurrentBagumi],
+}: Props) => {
+  const open = currentBangumi?.id === bangumi.id;
   return (
     <div
       style={{
@@ -27,12 +33,12 @@ export const Card = ({ item, setItem, open }: Props) => {
               userSelect: "none",
               cursor: "pointer",
             }}
-            onClick={() => setItem(open ? undefined : item)}
+            onClick={() => setCurrentBagumi(open ? undefined : bangumi)}
           >
-            <source srcSet={`/img/${item.id}.avif`} type="image/avif" />
+            <source srcSet={`/img/${bangumi.id}.avif`} type="image/avif" />
             <img
-              src={`/img/${item.id}.avif`}
-              alt={item.title}
+              src={`/img/${bangumi.id}.avif`}
+              alt={bangumi.title}
               style={{ width: 125, height: 175 }}
             />
           </picture>
@@ -42,9 +48,9 @@ export const Card = ({ item, setItem, open }: Props) => {
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
             }}
-            title={item.title}
+            title={bangumi.title}
           >
-            {item.title}
+            {bangumi.title}
           </div>
           <div
             style={{
@@ -52,9 +58,9 @@ export const Card = ({ item, setItem, open }: Props) => {
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
             }}
-            title={item.stat}
+            title={bangumi.stat}
           >
-            {item.stat}
+            {bangumi.stat}
           </div>
         </>
       ) : (
@@ -77,12 +83,12 @@ export const Card = ({ item, setItem, open }: Props) => {
                 cursor: "pointer",
                 flexShrink: 0,
               }}
-              onClick={() => setItem(open ? undefined : item)}
+              onClick={() => setCurrentBagumi(open ? undefined : bangumi)}
             >
-              <source srcSet={`/img/${item.id}.avif`} type="image/avif" />
+              <source srcSet={`/img/${bangumi.id}.avif`} type="image/avif" />
               <img
-                src={`/img/${item.id}.avif`}
-                alt={item.title}
+                src={`/img/${bangumi.id}.avif`}
+                alt={bangumi.title}
                 style={{ width: 250, height: 350 }}
               />
             </picture>
@@ -105,22 +111,22 @@ export const Card = ({ item, setItem, open }: Props) => {
                   gap: 4,
                 }}
               >
-                <div>{item.title}</div>
+                <div>{bangumi.title}</div>
                 <div>
-                  {item.stat} {item.total}
+                  {bangumi.stat} {bangumi.total}
                 </div>
-                <div>ID: {item.id}</div>
-                <div>首播日期: {item.start}</div>
-                <div>原著作者: {item.by}</div>
+                <div>ID: {bangumi.id}</div>
+                <div>首播日期: {bangumi.start}</div>
+                <div>原著作者: {bangumi.by}</div>
                 <div>
                   官方網站:{" "}
                   <a
                     style={{ color: "white" }}
                     target="_blank"
                     rel="noreferrer"
-                    href={item.site}
+                    href={bangumi.site}
                   >
-                    {item.site}
+                    {bangumi.site}
                   </a>
                 </div>
               </div>
@@ -134,7 +140,7 @@ export const Card = ({ item, setItem, open }: Props) => {
                   }}
                   target="_blank"
                   rel="noreferrer"
-                  href={`https://myself-bbs.com/thread-${item.id}-1-1.html`}
+                  href={`https://myself-bbs.com/thread-${bangumi.id}-1-1.html`}
                 >
                   前往網頁
                 </a>
@@ -149,7 +155,7 @@ export const Card = ({ item, setItem, open }: Props) => {
               overflowY: "scroll",
             }}
           >
-            {item.info}
+            {bangumi.info}
           </div>
         </div>
       )}

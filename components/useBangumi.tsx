@@ -1,5 +1,5 @@
 import { useInfiniteScroll } from "ahooks";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState, useTransition } from "react";
 import useSWR from "swr";
 import { Card } from "./Card";
 
@@ -20,12 +20,14 @@ export interface BangumiT {
   stat: string;
 }
 
-const EPISODES_PER_PAGE = 12;
+const BANGUMIS_PER_PAGE = 12;
 
 const useBangumi = () => {
-  const { data } = useSWR<BangumiT[]>("/data.json", (url: string) =>
+  const { data: rawData } = useSWR<BangumiT[]>("/data.json", (url: string) =>
     fetch(url).then((res) => res.json()),
   );
+
+  const [, startTransition] = useTransition();
 
   const [keyword, setKeyword] = useState("");
 
@@ -33,76 +35,74 @@ const useBangumi = () => {
 
   const bangumiData = useMemo(
     () =>
-      (data ?? []).filter(
-        (b) =>
-          b.title.toLowerCase().includes(keyword.toLowerCase()) ||
-          b.info.toLowerCase().includes(keyword.toLowerCase()) ||
-          `${b.id}`.toLowerCase().includes(keyword.toLowerCase()),
-      ),
-    [data, keyword],
+      (rawData ?? []).filter((b) => {
+        const k = keyword.toLowerCase();
+        const bid = `${b.id}`;
+        const bti = b.title.toLowerCase();
+        const bin = b.info.toLowerCase();
+        return bid.includes(k) || bti.includes(k) || bin.includes(k);
+      }),
+    [rawData, keyword],
   );
 
-  const getLoadMoreList = useCallback(
-    (nextIndex: number | undefined, rawData: BangumiT[]): Promise<ResultT> => {
-      const start = nextIndex ?? 0;
-      const end = start + EPISODES_PER_PAGE;
-      const list = rawData.slice(start, end);
-      const nIdx = rawData.length >= end ? end : undefined;
+  const getList = useCallback(
+    (d: ResultT | undefined): Promise<ResultT> => {
+      const start = d?.nextIndex ?? 0;
+      const end = start + BANGUMIS_PER_PAGE;
+      const list = bangumiData.slice(start, end);
+      const nIdx = bangumiData.length >= end ? end : undefined;
       return new Promise((resolve) => {
         resolve({
           list,
           nextIndex: nIdx,
           isNoMore:
-            start > rawData.length - EPISODES_PER_PAGE &&
-            start < rawData.length,
+            start > bangumiData.length - BANGUMIS_PER_PAGE &&
+            start < bangumiData.length,
         });
       });
     },
-    [],
+    [bangumiData],
   );
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const target = useRef<HTMLDivElement>(null);
 
-  const { data: pageData, reload } = useInfiniteScroll<ResultT>(
-    (d) => getLoadMoreList(d?.nextIndex, bangumiData),
-    {
-      target: containerRef,
-      isNoMore: (d) => d?.isNoMore ?? false,
-      reloadDeps: [bangumiData],
-    },
-  );
+  const { data, reload } = useInfiniteScroll<ResultT>(getList, {
+    target,
+    isNoMore: (d) => d?.isNoMore ?? false,
+    reloadDeps: [bangumiData],
+  });
 
   const bangumiList = useMemo(
     () => (
       <div
-        ref={containerRef}
+        ref={target}
         style={{
           width: "100%",
           flexGrow: 1,
+          alignContent: "start",
           overflowY: "scroll",
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(125px, 1fr))",
           gap: 12,
         }}
       >
-        {pageData?.list?.map((item, index) => (
+        {data?.list?.map((item, index) => (
           <Card
             key={index}
-            open={currentBangumi?.id === item.id}
-            item={item}
-            setItem={setCurrentBangumi}
+            bangumi={item}
+            currentBangumiState={[currentBangumi, setCurrentBangumi]}
           />
         ))}
       </div>
     ),
-    [currentBangumi?.id, pageData?.list],
+    [currentBangumi, data?.list],
   );
 
   const search = useMemo(
     () => (
       <input
         type="text"
-        placeholder="搜尋"
+        placeholder="SEARCH"
         style={{
           width: 320,
           backgroundColor: "transparent",
@@ -114,13 +114,15 @@ const useBangumi = () => {
         }}
         value={keyword}
         onChange={(e) => {
-          setKeyword(e.target.value);
-          setCurrentBangumi(undefined);
+          startTransition(() => {
+            setKeyword(e.target.value);
+            setCurrentBangumi(undefined);
+          });
           reload();
         }}
       />
     ),
-    [keyword, reload],
+    [keyword, reload, setCurrentBangumi],
   );
 
   return {
