@@ -19,7 +19,7 @@ export default function RootLayout({
         <meta name="description" content="MA7" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
-      <body>
+      <body style={{ margin: 0, padding: 0, border: 0 }}>
         <main>{children}</main>
       </body>
     </html>

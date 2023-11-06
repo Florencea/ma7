@@ -52,7 +52,9 @@ const useBangumi = () => {
         resolve({
           list,
           nextIndex: nIdx,
-          isNoMore: rawData.length > 0 ? rawData.length === list.length : false,
+          isNoMore:
+            start > rawData.length - EPISODES_PER_PAGE &&
+            start < rawData.length,
         });
       });
     },
