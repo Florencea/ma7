@@ -29,10 +29,7 @@ export const Card = ({ item, setItem, open }: Props) => {
             }}
             onClick={() => setItem(open ? undefined : item)}
           >
-            <source
-              srcSet={`/img/${item.img}`}
-              type="image/avif"
-            />
+            <source srcSet={`/img/${item.img}`} type="image/avif" />
             <img
               src={`/img/${item.img}`}
               alt={item.title}
@@ -55,9 +52,9 @@ export const Card = ({ item, setItem, open }: Props) => {
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
             }}
-            title={item.statusText}
+            title={item.stat}
           >
-            {item.statusText}
+            {item.stat}
           </div>
         </>
       ) : (
@@ -82,10 +79,7 @@ export const Card = ({ item, setItem, open }: Props) => {
               }}
               onClick={() => setItem(open ? undefined : item)}
             >
-              <source
-                srcSet={`/img/${item.img}`}
-                type="image/avif"
-              />
+              <source srcSet={`/img/${item.img}`} type="image/avif" />
               <img
                 src={`/img/${item.img}`}
                 alt={item.title}
@@ -112,10 +106,12 @@ export const Card = ({ item, setItem, open }: Props) => {
                 }}
               >
                 <div>{item.title}</div>
-                <div>{item.statusTextLong}</div>
+                <div>
+                  {item.stat} {item.total}
+                </div>
                 <div>ID: {item.id}</div>
-                <div>首播日期: {item.roadshow}</div>
-                <div>原著作者: {item.originalAuthor.join("/")}</div>
+                <div>首播日期: {item.start}</div>
+                <div>原著作者: {item.by}</div>
                 <div>
                   官方網站:{" "}
                   <a

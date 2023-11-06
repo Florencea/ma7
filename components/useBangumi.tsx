@@ -14,11 +14,11 @@ export interface BangumiT {
   title: string;
   img: string;
   info: string;
-  roadshow: string;
-  originalAuthor: string[];
+  start: string;
+  by: string;
   site: string;
-  statusTextLong: string;
-  statusText: string;
+  total: string;
+  stat: string;
 }
 
 const EPISODES_PER_PAGE = 12;
