@@ -30,11 +30,11 @@ export const Card = ({ item, setItem, open }: Props) => {
             onClick={() => setItem(open ? undefined : item)}
           >
             <source
-              srcSet={`/img/${item.img.split("/").pop()}.avif`}
+              srcSet={`/img/${item.img}`}
               type="image/avif"
             />
             <img
-              src={`/img/${item.img.split("/").pop()}.avif`}
+              src={`/img/${item.img}`}
               alt={item.title}
               style={{ width: 125, height: 175 }}
             />
@@ -83,11 +83,11 @@ export const Card = ({ item, setItem, open }: Props) => {
               onClick={() => setItem(open ? undefined : item)}
             >
               <source
-                srcSet={`/img/${item.img.split("/").pop()}.avif`}
+                srcSet={`/img/${item.img}`}
                 type="image/avif"
               />
               <img
-                src={`/img/${item.img.split("/").pop()}.avif`}
+                src={`/img/${item.img}`}
                 alt={item.title}
                 style={{ width: 250, height: 350 }}
               />
