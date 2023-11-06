@@ -17,7 +17,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      - run: npm ci
       - uses: actions/cache@v3
         with:
           path: |
@@ -27,6 +26,7 @@ jobs:
           key: ${{ runner.os }}-cache-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
             ${{ runner.os }}-cache-${{ hashFiles('**/package-lock.json') }}-
+      - run: npm ci
       - run: npm run crawl
       - run: npm run build
       - uses: cloudflare/pages-action@v1
