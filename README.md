@@ -1,7 +1,7 @@
 # MA7
 
 - <https://ma7.pages.dev/>
-- A mirror site for <https://myself-bbs.com/>
+- A SUPER FAST⚡️ site for indexing <https://myself-bbs.com/>
 
 ## Feature
 
