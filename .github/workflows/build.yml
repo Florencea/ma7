@@ -19,6 +19,10 @@ jobs:
           node-version: 20
           cache: "npm"
       - run: npm ci
+      - uses: actions/cache@v3
+        with:
+          path: node_modules/.imgcache
+          key: ${{ runner.os }}-${{ hashFiles('node_modules/.imgcache') }}
       - run: npm run crawl
       - run: npm run build
       - uses: cloudflare/pages-action@v1
