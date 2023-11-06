@@ -177,6 +177,7 @@ const useBangumi = () => {
   const startSearch = useMemo(
     () => (
       <select
+        aria-label="year search"
         placeholder="YEARS"
         style={{
           appearance: "none",
