@@ -12,7 +12,6 @@ export interface ResultT {
 export interface BangumiT {
   id: number;
   title: string;
-  img: string;
   info: string;
   start: string;
   by: string;

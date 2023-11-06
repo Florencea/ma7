@@ -29,9 +29,9 @@ export const Card = ({ item, setItem, open }: Props) => {
             }}
             onClick={() => setItem(open ? undefined : item)}
           >
-            <source srcSet={`/img/${item.img}`} type="image/avif" />
+            <source srcSet={`/img/${item.id}.avif`} type="image/avif" />
             <img
-              src={`/img/${item.img}`}
+              src={`/img/${item.id}.avif`}
               alt={item.title}
               style={{ width: 125, height: 175 }}
             />
@@ -79,9 +79,9 @@ export const Card = ({ item, setItem, open }: Props) => {
               }}
               onClick={() => setItem(open ? undefined : item)}
             >
-              <source srcSet={`/img/${item.img}`} type="image/avif" />
+              <source srcSet={`/img/${item.id}.avif`} type="image/avif" />
               <img
-                src={`/img/${item.img}`}
+                src={`/img/${item.id}.avif`}
                 alt={item.title}
                 style={{ width: 250, height: 350 }}
               />
