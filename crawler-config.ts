@@ -9,7 +9,6 @@ export const IMG_DIR_PATH = join(DB_DIR_PATH, "img");
 export const CACHE_DIR_PATH = join(__dirname, ".next", "cache", "img");
 export const CACHE_FILE_PATH = join(CACHE_DIR_PATH, "cache.txt");
 export const DATE_FORMAT = "YYYY-MM-DD";
-export const COUNT_PER_PAGE = 20;
 export const IMAGE_MIMETYPE = [
   "image/jpeg",
   "image/png",
@@ -43,12 +42,14 @@ export const CRAWLER_OPTIONS: ConfigurationOptions = {
   logLevel: 1,
   persistStorage: false,
 };
-export const ONAIR_URL_TEMPLATE = (i: number) =>
-  `https://myself-bbs.com/forum-133-${i + 1}.html`;
-export const ENDED_URL_TEMPLATE = (i: number) =>
-  `https://myself-bbs.com/forum-113-${i + 1}.html`;
 export const BANGUMI_URL_TEMPLATE = (id: number) =>
   `https://myself-bbs.com/thread-${id}-1-1.html`;
 const ONAIR_URL = "https://myself-bbs.com/forum-133-1.html";
 const ENDED_URL = "https://myself-bbs.com/forum-113-1.html";
 export const INDEX_URL_LIST = [ONAIR_URL, ENDED_URL];
+
+export type BasicBangumiT = {
+  id: number;
+  end: boolean;
+  start?: string;
+};

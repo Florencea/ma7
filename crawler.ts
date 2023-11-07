@@ -7,33 +7,26 @@ import { join } from "node:path";
 import sharp from "sharp";
 import {
   BANGUMI_URL_TEMPLATE,
+  BasicBangumiT,
   CACHE_DIR_PATH,
   CACHE_FILE_PATH,
-  COUNT_PER_PAGE,
   CRAWLER_CONFIG,
   CRAWLER_OPTIONS,
   DATE_FORMAT,
   DB_DIR_PATH,
   DB_PATH,
-  ENDED_URL_TEMPLATE,
   IMAGE_404_LIST,
   IMAGE_DUPLICATEID_MAP,
   IMAGE_MIMETYPE,
   IMG_DIR_PATH,
   INDEX_URL_LIST,
-  ONAIR_URL_TEMPLATE,
   START_CORRECTION_MAP,
 } from "./crawler-config";
+import { ContentParser } from "./crawler-content-parser";
+import { IndexParser } from "./crawler-index-parser";
 dayjs.extend(CustomParseFormat);
 
-type BasicBangumiT = {
-  id: number;
-  end: boolean;
-  start?: string;
-};
-
 let GLOBAL_INDEX_DB: Map<number, BasicBangumiT> = new Map();
-let GLOBAL_MAX_COUNT = 0;
 
 const GLOBAL_PAGE_URLS_SET: Set<string> = new Set();
 const GLOBAL_IMG_URLS_MAP: Map<string, number> = new Map();
@@ -81,26 +74,6 @@ function saveGlobalIndexDb() {
   mkdirSync(DB_DIR_PATH, { recursive: true });
   writeFileSync(DB_PATH, db_json);
   logger(`Complete fetch ${GLOBAL_INDEX_DB.size} Bangumis.`);
-}
-
-function isOnAirIndex(index_url: string) {
-  return index_url.split("-")[2] === "133";
-}
-
-function getUrlSequence(index_url: string, max_page: number) {
-  return isOnAirIndex(index_url)
-    ? [...Array(max_page).keys()].map((i) => ONAIR_URL_TEMPLATE(i + 1))
-    : [...Array(max_page).keys()].map((i) => ENDED_URL_TEMPLATE(i + 1));
-}
-
-function getMaxPage($: cheerio.CheerioAPI) {
-  const max_count_str = $("h1.xs2 > .xs1.xw0.i")
-    .find("strong:last-child")
-    .text();
-  const max_count = parseInt(max_count_str, 10);
-  GLOBAL_MAX_COUNT += max_count;
-  const max_page = Math.ceil(max_count / COUNT_PER_PAGE);
-  return max_page;
 }
 
 function getBangumiId(request_url: string) {
@@ -262,46 +235,15 @@ const BangumiCrawler = new CheerioCrawler(
   new Configuration(CRAWLER_OPTIONS),
 );
 
-class ContentParser {
-  private $: cheerio.CheerioAPI;
-  private result: BasicBangumiT[];
-  constructor($: cheerio.CheerioAPI) {
-    this.$ = $;
-    this.result = [];
-  }
-  public parse(callback: (result: BasicBangumiT[]) => void) {
-    this.$("div.c.cl").each((_, el) => {
-      const id = this.getId(el);
-      const end = this.getEnd(el);
-      this.result.push({ id, end });
-    });
-    callback(this.result);
-  }
-  private getId(el: cheerio.Element) {
-    const id_link = this.$(el).children("a").attr("href");
-    const id_str = `${id_link}`.split("-")[1];
-    const id = parseInt(id_str, 10);
-    return id;
-  }
-  private getEnd(el: cheerio.Element) {
-    const latest_info = this.$(el).find(".ep_info").text();
-    const end_str = latest_info.split(" ")[0];
-    return end_str === "全";
-  }
-}
-
 const ContentCrawler = new CheerioCrawler(
   {
     ...CRAWLER_CONFIG,
     requestHandler: async ({ $ }) => {
       const contentParser = new ContentParser($);
-      contentParser.parse((result) => {
-        result.forEach((item) => {
-          const { id, end } = item;
-          GLOBAL_INDEX_DB.set(id, {
-            id,
-            end,
-          });
+      contentParser.parse(({ id, end }) => {
+        GLOBAL_INDEX_DB.set(id, {
+          id,
+          end,
         });
       });
     },
@@ -313,9 +255,10 @@ const IndexCrawler = new CheerioCrawler(
   {
     ...CRAWLER_CONFIG,
     requestHandler: async ({ request, $ }) => {
-      getUrlSequence(request.url, getMaxPage($)).forEach((url) =>
-        GLOBAL_PAGE_URLS_SET.add(url),
-      );
+      const indexParser = new IndexParser(request, $);
+      indexParser.parse((url) => {
+        GLOBAL_PAGE_URLS_SET.add(url);
+      });
     },
   },
   new Configuration(CRAWLER_OPTIONS),
