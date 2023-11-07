@@ -50,10 +50,10 @@ export class BangumiParser {
     this.total = this.getTotal();
     this.stat = this.getStat();
   }
-  public parse(bangumiCallback: (bangumi: FullBangumiT) => void) {
+  public parse(bangumiCallback: (id: number, bangumi: FullBangumiT) => void) {
     const { id, _end, title, _imgUrl, info, start, by, site, total, stat } =
       this;
-    bangumiCallback({
+    bangumiCallback(id, {
       id,
       _end,
       title,
