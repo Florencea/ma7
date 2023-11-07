@@ -102,18 +102,6 @@ function getMaxPage($: cheerio.CheerioAPI) {
   const max_page = Math.ceil(max_count / COUNT_PER_PAGE);
   return max_page;
 }
-function getId($: cheerio.CheerioAPI, el: cheerio.Element) {
-  const id_link = $(el).children("a").attr("href");
-  const id_str = `${id_link}`.split("-")[1];
-  const id = parseInt(id_str, 10);
-  return id;
-}
-
-function getEnd($: cheerio.CheerioAPI, el: cheerio.Element) {
-  const latest_info = $(el).find(".ep_info").text();
-  const end_str = latest_info.split(" ")[0];
-  return end_str === "全";
-}
 
 function getBangumiId(request_url: string) {
   const id_str = request_url.split("-")[2];
@@ -274,16 +262,46 @@ const BangumiCrawler = new CheerioCrawler(
   new Configuration(CRAWLER_OPTIONS),
 );
 
+class ContentParser {
+  private $: cheerio.CheerioAPI;
+  private result: BasicBangumiT[];
+  constructor($: cheerio.CheerioAPI) {
+    this.$ = $;
+    this.result = [];
+  }
+  public parse(callback: (result: BasicBangumiT[]) => void) {
+    this.$("div.c.cl").each((_, el) => {
+      const id = this.getId(el);
+      const end = this.getEnd(el);
+      this.result.push({ id, end });
+    });
+    callback(this.result);
+  }
+  private getId(el: cheerio.Element) {
+    const id_link = this.$(el).children("a").attr("href");
+    const id_str = `${id_link}`.split("-")[1];
+    const id = parseInt(id_str, 10);
+    return id;
+  }
+  private getEnd(el: cheerio.Element) {
+    const latest_info = this.$(el).find(".ep_info").text();
+    const end_str = latest_info.split(" ")[0];
+    return end_str === "全";
+  }
+}
+
 const ContentCrawler = new CheerioCrawler(
   {
     ...CRAWLER_CONFIG,
     requestHandler: async ({ $ }) => {
-      $("div.c.cl").each((_, el) => {
-        const id = getId($, el);
-        const end = getEnd($, el);
-        GLOBAL_INDEX_DB.set(id, {
-          id,
-          end,
+      const contentParser = new ContentParser($);
+      contentParser.parse((result) => {
+        result.forEach((item) => {
+          const { id, end } = item;
+          GLOBAL_INDEX_DB.set(id, {
+            id,
+            end,
+          });
         });
       });
     },
