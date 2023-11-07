@@ -21,7 +21,9 @@ jobs:
       - run: npm ci
       - uses: actions/cache@v3
         with:
-          path: node_modules/.imgcache
+          path: |
+            ${{ github.workspace }}/node_modules/.imgcache
+            ${{ github.workspace }}/.next/cache
           key: ${{ runner.os }}-cache
       - run: npm run crawl
       - run: npm run build
