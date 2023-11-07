@@ -5,28 +5,27 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { copyFile } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
+import { BangumiParser } from "./crawler-bangumi-parser";
 import {
   BANGUMI_URL_TEMPLATE,
-  BasicBangumiT,
   CACHE_DIR_PATH,
   CACHE_FILE_PATH,
   CRAWLER_CONFIG,
   CRAWLER_OPTIONS,
-  DATE_FORMAT,
   DB_DIR_PATH,
   DB_PATH,
+  FullBangumiT,
   IMAGE_404_LIST,
   IMAGE_DUPLICATEID_MAP,
   IMAGE_MIMETYPE,
   IMG_DIR_PATH,
   INDEX_URL_LIST,
-  START_CORRECTION_MAP,
 } from "./crawler-config";
 import { ContentParser } from "./crawler-content-parser";
 import { IndexParser } from "./crawler-index-parser";
 dayjs.extend(CustomParseFormat);
 
-let GLOBAL_INDEX_DB: Map<number, BasicBangumiT> = new Map();
+let GLOBAL_INDEX_DB: Map<number, FullBangumiT> = new Map();
 
 const GLOBAL_PAGE_URLS_SET: Set<string> = new Set();
 const GLOBAL_IMG_URLS_MAP: Map<string, number> = new Map();
@@ -55,8 +54,8 @@ function saveGlobalIndexDb() {
   const db_data = rawData
     .sort((a, b) => {
       // not end first
-      if (a.end !== b.end) {
-        return a.end ? 1 : -1;
+      if (a._end !== b._end) {
+        return a._end ? 1 : -1;
       }
       // by start reverse
       if (a.start !== b.start) {
@@ -69,103 +68,11 @@ function saveGlobalIndexDb() {
       // default by id reverse
       return b.id - a.id;
     })
-    .map(({ end, ...rest }) => rest);
+    .map(({ _end, _imgUrl, ...rest }) => rest);
   const db_json = JSON.stringify(db_data);
   mkdirSync(DB_DIR_PATH, { recursive: true });
   writeFileSync(DB_PATH, db_json);
   logger(`Complete fetch ${GLOBAL_INDEX_DB.size} Bangumis.`);
-}
-
-function getBangumiId(request_url: string) {
-  const id_str = request_url.split("-")[2];
-  const id = parseInt(id_str, 10);
-  return id;
-}
-
-function getBangumiTitle($: cheerio.CheerioAPI) {
-  const title = $("title").text().split("【")[0];
-  return title;
-}
-
-function getBangumiImg($: cheerio.CheerioAPI) {
-  const img = $(".info_img_box.fl > img").attr("src");
-  return `${img}`;
-}
-
-function getBangumiInfo($: cheerio.CheerioAPI) {
-  const info = $("#info_introduction_text").text();
-  return info;
-}
-
-function getBangumiStart(id: number, $: cheerio.CheerioAPI) {
-  if (START_CORRECTION_MAP.has(id)) {
-    return `${START_CORRECTION_MAP.get(id)}`;
-  } else {
-    const start_str = $(".info_info > ul > li:nth-child(2)")
-      .text()
-      .split(": ")[1];
-    const start = dayjs(start_str, "YYYY年MM月DD日").format(DATE_FORMAT);
-    return start === "Invalid Date" ? "未知" : start;
-  }
-}
-
-function getBangumiTotalEpisodes($: cheerio.CheerioAPI) {
-  const totalEpisodes_str = $(".info_info > ul > li:nth-child(3)")
-    .text()
-    .split(": ")[1];
-  const totalEpisodes =
-    totalEpisodes_str === "未定"
-      ? -1
-      : parseInt(totalEpisodes_str.split(" ")[1], 10);
-  return totalEpisodes;
-}
-
-function getBangumiBy($: cheerio.CheerioAPI) {
-  const by_str = $(".info_info > ul > li:nth-child(4)").text().split(": ")[1];
-  const by_arr = by_str.split("／");
-  if (by_arr.length > 1) {
-    return `${by_arr.join("/")}`;
-  } else if (by_arr[0].split(" / ")[0] !== "") {
-    return `${by_arr[0].split(" / ").join("/")}`;
-  } else {
-    return "";
-  }
-}
-
-function getBangumiSite($: cheerio.CheerioAPI) {
-  const site = $(".info_info > ul > li:nth-child(5) > a").attr("href");
-  return site;
-}
-
-function isValidVideo(idStr: string) {
-  return idStr.split("/player/")[0] === "https://v.myself-bbs.com";
-}
-
-function getBangumiEpisodes($: cheerio.CheerioAPI) {
-  const episodes_arr = $(".main_list li:has(ul)")
-    .map((_, el) => {
-      const idStr = $(el).find("a[data-href*=myself]").attr("data-href") || "";
-      if (isValidVideo(idStr)) {
-        const title = $(el).find('li > a[href="javascript:;"]').text();
-        return { title };
-      } else {
-        return { title: "" };
-      }
-    })
-    .get() as { title: string }[];
-  return episodes_arr;
-}
-
-function getBangumiTotal(end: boolean, totalEpisodes: number) {
-  return end
-    ? ""
-    : `${
-        (totalEpisodes ?? -1) < 0 ? "(總集數未定)" : `(共 ${totalEpisodes} 話)`
-      }`;
-}
-
-function getBangumiStat(end: boolean, episodes: { title: string }[]) {
-  return end ? "已完結" : `連載至 ${episodes[episodes.length - 1]?.title}`;
 }
 
 const ImageCrawler = new HttpCrawler(
@@ -204,32 +111,13 @@ const BangumiCrawler = new CheerioCrawler(
   {
     ...CRAWLER_CONFIG,
     requestHandler: async ({ request, $ }) => {
-      const id = getBangumiId(request.url);
-      const title = getBangumiTitle($);
-      const imgUrl = getBangumiImg($);
-      const info = getBangumiInfo($);
-      const start = getBangumiStart(id, $);
-      const totalEpisodes = getBangumiTotalEpisodes($);
-      const by = getBangumiBy($);
-      const site = getBangumiSite($);
-      const episodes = getBangumiEpisodes($);
-      const bangumi_index_data = GLOBAL_INDEX_DB.get(id) as BasicBangumiT;
-      const total = getBangumiTotal(bangumi_index_data.end, totalEpisodes);
-      const stat = getBangumiStat(bangumi_index_data.end, episodes);
-      const bangumi_data = {
-        ...bangumi_index_data,
-        title,
-        info,
-        start,
-        by,
-        site,
-        total,
-        stat,
-      };
-      GLOBAL_INDEX_DB.set(id, bangumi_data);
-      if (!IMAGE_404_LIST.includes(imgUrl)) {
-        GLOBAL_IMG_URLS_MAP.set(imgUrl, id);
-      }
+      const bangumiParser = new BangumiParser(request, $, GLOBAL_INDEX_DB);
+      bangumiParser.parse((bangumi) => {
+        GLOBAL_INDEX_DB.set(bangumi.id, bangumi);
+        if (!IMAGE_404_LIST.includes(bangumi._imgUrl)) {
+          GLOBAL_IMG_URLS_MAP.set(bangumi._imgUrl, bangumi.id);
+        }
+      });
     },
   },
   new Configuration(CRAWLER_OPTIONS),
@@ -240,11 +128,8 @@ const ContentCrawler = new CheerioCrawler(
     ...CRAWLER_CONFIG,
     requestHandler: async ({ $ }) => {
       const contentParser = new ContentParser($);
-      contentParser.parse(({ id, end }) => {
-        GLOBAL_INDEX_DB.set(id, {
-          id,
-          end,
-        });
+      contentParser.parse((item) => {
+        GLOBAL_INDEX_DB.set(item.id, item);
       });
     },
   },

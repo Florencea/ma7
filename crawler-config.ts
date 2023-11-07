@@ -48,8 +48,28 @@ const ONAIR_URL = "https://myself-bbs.com/forum-133-1.html";
 const ENDED_URL = "https://myself-bbs.com/forum-113-1.html";
 export const INDEX_URL_LIST = [ONAIR_URL, ENDED_URL];
 
-export type BasicBangumiT = {
+export type FullBangumiT = {
   id: number;
-  end: boolean;
-  start?: string;
+  _end: boolean;
+  title: string;
+  _imgUrl: string;
+  info: string;
+  start: string;
+  by: string;
+  site: string;
+  total: string;
+  stat: string;
+};
+
+export const EMPTY_BANGUMI: FullBangumiT = {
+  id: -1,
+  _end: true,
+  title: "",
+  _imgUrl: "",
+  info: "",
+  start: "",
+  by: "",
+  site: "",
+  total: "",
+  stat: "",
 };
