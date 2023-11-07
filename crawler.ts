@@ -26,8 +26,6 @@ import {
 } from "./crawler-config";
 dayjs.extend(CustomParseFormat);
 
-mkdirSync(IMG_DIR_PATH, { recursive: true });
-
 type BasicBangumiT = {
   id: number;
   end: boolean;
@@ -304,10 +302,9 @@ const IndexCrawler = new CheerioCrawler(
   },
   new Configuration(CRAWLER_OPTIONS),
 );
-/**
- * @returns {string[]}
- */
-function loadCachedImgUrls(): string[] {
+
+function loadCachedImgUrls() {
+  mkdirSync(IMG_DIR_PATH, { recursive: true });
   mkdirSync(CACHE_DIR_PATH, { recursive: true });
   if (existsSync(CACHE_FILE_PATH)) {
     const cacheTxt = readFileSync(CACHE_FILE_PATH, { encoding: "utf-8" });
@@ -316,10 +313,7 @@ function loadCachedImgUrls(): string[] {
     return [];
   }
 }
-/**
- * @param {string[]} cachedImgUrls
- * @param {string[]} currentImgUrls
- **/
+
 function pruneImgUrls(cachedImgUrls: string[], currentImgUrls: string[]) {
   const cachedImgUrlsSet = new Set(cachedImgUrls);
   const currentImgUrlsSet = new Set(currentImgUrls);
@@ -333,9 +327,6 @@ function pruneImgUrls(cachedImgUrls: string[], currentImgUrls: string[]) {
   return { imgUrlsFromCache, imgUrlsFromSource, imgUrlsAll };
 }
 
-/**
- * @param {string[]} imgUrls
- */
 async function copyImgFromCache(imgUrls: string[]) {
   await Promise.all(
     imgUrls.map(async (imgUrl) => {
@@ -365,18 +356,11 @@ async function copyImgFromCache(imgUrls: string[]) {
   );
 }
 
-/**
- * @param {string[]} imgUrls
- */
 function writeImgUrlsCacheList(imgUrls: string[]) {
   const imgUrlsTxt = imgUrls.join("\n");
   writeFileSync(CACHE_FILE_PATH, imgUrlsTxt);
 }
 
-/**
- *
- * @param {string[]} currentImgUrls
- */
 async function restoreImgCache(currentImgUrls: string[]) {
   const cachedImgUrls = loadCachedImgUrls();
   const { imgUrlsFromCache, imgUrlsFromSource, imgUrlsAll } = pruneImgUrls(
@@ -389,9 +373,6 @@ async function restoreImgCache(currentImgUrls: string[]) {
   return imgUrlsFromSource;
 }
 
-/**
- * @param {string[]} index_url_arr
- */
 export default async function crawler() {
   try {
     logger("Fetch Bangumi Index...");
