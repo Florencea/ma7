@@ -7,15 +7,10 @@ import { join } from "node:path";
 import sharp from "sharp";
 import { BangumiParser } from "./crawler-bangumi-parser";
 import {
-  BANGUMI_URL_TEMPLATE,
   CACHE_DIR_PATH,
   CACHE_FILE_PATH,
   CRAWLER_CONFIG,
   CRAWLER_OPTIONS,
-  DB_DIR_PATH,
-  DB_PATH,
-  FullBangumiT,
-  IMAGE_404_LIST,
   IMAGE_DUPLICATEID_MAP,
   IMAGE_MIMETYPE,
   IMG_DIR_PATH,
@@ -23,57 +18,13 @@ import {
 } from "./crawler-config";
 import { ContentParser } from "./crawler-content-parser";
 import { IndexParser } from "./crawler-index-parser";
+import { Logger } from "./crawler-logger";
+import { Storage } from "./crawler-storage";
 dayjs.extend(CustomParseFormat);
 
-let GLOBAL_INDEX_DB: Map<number, FullBangumiT> = new Map();
+const storage = new Storage();
 
-const GLOBAL_PAGE_URLS_SET: Set<string> = new Set();
-const GLOBAL_IMG_URLS_MAP: Map<string, number> = new Map();
-
-export function now() {
-  const current = new Date();
-  const currentStr = new Intl.DateTimeFormat("lt-LT", {
-    timeZone: "Asia/Taipei",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  }).format(current);
-  return currentStr;
-}
-
-export function logger(content: string) {
-  console.info(`${now()} ${content}`);
-}
-
-function saveGlobalIndexDb() {
-  const rawData = [...GLOBAL_INDEX_DB.values()];
-  const db_data = rawData
-    .sort((a, b) => {
-      // not end first
-      if (a._end !== b._end) {
-        return a._end ? 1 : -1;
-      }
-      // by start reverse
-      if (a.start !== b.start) {
-        const ad = dayjs(a.start);
-        const as = ad.isValid() ? ad : dayjs("1900-01-01");
-        const bd = dayjs(b.start);
-        const bs = bd.isValid() ? bd : dayjs("1900-01-01");
-        return as.isBefore(bs) ? 1 : -1;
-      }
-      // default by id reverse
-      return b.id - a.id;
-    })
-    .map(({ _end, _imgUrl, ...rest }) => rest);
-  const db_json = JSON.stringify(db_data);
-  mkdirSync(DB_DIR_PATH, { recursive: true });
-  writeFileSync(DB_PATH, db_json);
-  logger(`Complete fetch ${GLOBAL_INDEX_DB.size} Bangumis.`);
-}
+const logger = new Logger();
 
 const ImageCrawler = new HttpCrawler(
   {
@@ -81,7 +32,7 @@ const ImageCrawler = new HttpCrawler(
     additionalMimeTypes: IMAGE_MIMETYPE,
     requestHandler: async ({ request, body, response }) => {
       try {
-        const id = Number(GLOBAL_IMG_URLS_MAP.get(request.url));
+        const id = storage.getImgId(request.url);
         const img = `${id}.avif`;
         const imgPath = join(IMG_DIR_PATH, img);
         const imgCachePath = join(CACHE_DIR_PATH, img);
@@ -97,9 +48,9 @@ const ImageCrawler = new HttpCrawler(
           await copyFile(imgPath_duplicate, imgCachePath_duplicate);
         }
       } catch {
-        GLOBAL_IMG_URLS_MAP.delete(request.url);
-        logger(
-          `ERR: [retry ${request.retryCount}] [${response.statusCode}: ${response.statusMessage}] ${request.url}`,
+        storage.removeImg(request.url);
+        logger.error(
+          `[retry ${request.retryCount}] [${response.statusCode}: ${response.statusMessage}] ${request.url}`,
         );
       }
     },
@@ -111,12 +62,10 @@ const BangumiCrawler = new CheerioCrawler(
   {
     ...CRAWLER_CONFIG,
     requestHandler: async ({ request, $ }) => {
-      const bangumiParser = new BangumiParser(request, $, GLOBAL_INDEX_DB);
+      const bangumiParser = new BangumiParser(request, $, storage.getStorage());
       bangumiParser.parse((bangumi) => {
-        GLOBAL_INDEX_DB.set(bangumi.id, bangumi);
-        if (!IMAGE_404_LIST.includes(bangumi._imgUrl)) {
-          GLOBAL_IMG_URLS_MAP.set(bangumi._imgUrl, bangumi.id);
-        }
+        storage.addBangumi(bangumi.id, bangumi);
+        storage.addImg(bangumi._imgUrl, bangumi.id);
       });
     },
   },
@@ -129,7 +78,7 @@ const ContentCrawler = new CheerioCrawler(
     requestHandler: async ({ $ }) => {
       const contentParser = new ContentParser($);
       contentParser.parse((item) => {
-        GLOBAL_INDEX_DB.set(item.id, item);
+        storage.addBangumi(item.id, item);
       });
     },
   },
@@ -142,7 +91,7 @@ const IndexCrawler = new CheerioCrawler(
     requestHandler: async ({ request, $ }) => {
       const indexParser = new IndexParser(request, $);
       indexParser.parse((url) => {
-        GLOBAL_PAGE_URLS_SET.add(url);
+        storage.addPage(url);
       });
     },
   },
@@ -176,7 +125,7 @@ function pruneImgUrls(cachedImgUrls: string[], currentImgUrls: string[]) {
 async function copyImgFromCache(imgUrls: string[]) {
   await Promise.all(
     imgUrls.map(async (imgUrl) => {
-      const id = Number(GLOBAL_IMG_URLS_MAP.get(imgUrl));
+      const id = storage.getImgId(imgUrl);
       const img = `${id}.avif`;
       const source = join(CACHE_DIR_PATH, img);
       const destination = join(IMG_DIR_PATH, img);
@@ -188,7 +137,7 @@ async function copyImgFromCache(imgUrls: string[]) {
         if (existsSync(source_duplicate)) {
           await copyFile(source_duplicate, destination_duplicate);
         } else {
-          logger(
+          logger.info(
             `[CACHE] cannot found ${source_duplicate} in cache, skip copy`,
           );
         }
@@ -196,7 +145,7 @@ async function copyImgFromCache(imgUrls: string[]) {
       if (existsSync(source)) {
         await copyFile(source, destination);
       } else {
-        logger(`[CACHE] cannot found ${source} in cache, skip copy`);
+        logger.info(`[CACHE] cannot found ${source} in cache, skip copy`);
       }
     }),
   );
@@ -214,42 +163,38 @@ async function restoreImgCache(currentImgUrls: string[]) {
     currentImgUrls,
   );
   await copyImgFromCache(imgUrlsFromCache);
-  logger(`Restore ${imgUrlsFromCache.length} images from cache`);
+  logger.info(`Restore ${imgUrlsFromCache.length} images from cache`);
   writeImgUrlsCacheList(imgUrlsAll);
   return imgUrlsFromSource;
 }
 
 export default async function crawler() {
   try {
-    logger("Fetch Bangumi Index...");
+    logger.info("Fetch Bangumi Index...");
     await IndexCrawler.run(INDEX_URL_LIST);
 
-    logger("Fetch Bangumi List...");
-    await ContentCrawler.run([...GLOBAL_PAGE_URLS_SET.values()]);
+    logger.info("Fetch Bangumi List...");
+    await ContentCrawler.run(storage.getPageUrls());
 
-    logger("Fetch Bangumi Content...");
-    await BangumiCrawler.run(
-      [...GLOBAL_INDEX_DB.keys()].map((id) => BANGUMI_URL_TEMPLATE(id)),
-    );
+    logger.info("Fetch Bangumi Content...");
+    await BangumiCrawler.run(storage.generateBangumiUrls());
 
-    saveGlobalIndexDb();
+    storage.save();
 
-    const allImgUrlsSize = GLOBAL_IMG_URLS_MAP.size;
-    const imgsUrlsToFetch = await restoreImgCache([
-      ...GLOBAL_IMG_URLS_MAP.keys(),
-    ]);
+    const allImgUrlsSize = storage.getImgSize();
+    const imgsUrlsToFetch = await restoreImgCache(storage.getImgUrls());
 
-    logger(
+    logger.info(
       `Fetch Bangumi Images, ${imgsUrlsToFetch.length} images needs to fetch...`,
     );
     await ImageCrawler.run(imgsUrlsToFetch);
-    logger(
+    logger.info(
       `Complete fetch ${
-        imgsUrlsToFetch.length - (allImgUrlsSize - GLOBAL_IMG_URLS_MAP.size)
+        imgsUrlsToFetch.length - (allImgUrlsSize - storage.getImgSize())
       } images`,
     );
   } catch (err: any) {
-    logger(`${err?.name}: ${err?.messsage}\n${err?.stack}`);
+    logger.error(`${err?.name}: ${err?.messsage}\n${err?.stack}`);
   }
 }
 

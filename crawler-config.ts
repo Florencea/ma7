@@ -21,17 +21,6 @@ export const IMAGE_404_LIST = [
   "https://myself-bbs.com/data/attachment/forum/201607/09/1037264653qk9qn949kgqs.jpg",
 ];
 export const IMAGE_DUPLICATEID_MAP = new Map([[45295, 45299]]);
-export const START_CORRECTION_MAP = new Map([
-  [50032, "2023-10-07"],
-  [42650, "2013-01-02"],
-  [44473, "2014-09-28"],
-  [44620, "2014-08-22"],
-  [44819, "2013-04-28"],
-  [45311, "2019-05-24"],
-  [47141, "2021-02-25"],
-  [48332, "2022-07-07"],
-  [49522, "2023-04-09"],
-]);
 export const CRAWLER_CONFIG = {
   maxConcurrency: 50,
   maxRequestRetries: 3,
