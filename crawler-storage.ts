@@ -45,7 +45,6 @@ export class Storage {
     if (!this.IMAGE_404_LIST.includes(imgUrl)) {
       this.imgs.set(imgUrl, id);
     }
-    this.imgs.set(imgUrl, id);
   }
   public getImgId(imgUrl: string) {
     return this.imgs.get(imgUrl)!;
