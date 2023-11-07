@@ -1,6 +1,18 @@
-import { EMPTY_BANGUMI, FullBangumiT } from "./crawler-config";
+import { FullBangumiT } from "./crawler-storage";
 
 export class ContentParser {
+  private EMPTY_BANGUMI: FullBangumiT = {
+    id: -1,
+    _end: true,
+    title: "",
+    _imgUrl: "",
+    info: "",
+    start: "",
+    by: "",
+    site: "",
+    total: "",
+    stat: "",
+  };
   private $: cheerio.CheerioAPI;
   private items: [number, FullBangumiT][];
   constructor($: cheerio.CheerioAPI) {
@@ -11,7 +23,7 @@ export class ContentParser {
     this.$("div.c.cl").each((_, el) => {
       const id = this.getId(el);
       const _end = this.getEnd(el);
-      this.items.push([id, { ...EMPTY_BANGUMI, id, _end }]);
+      this.items.push([id, { ...this.EMPTY_BANGUMI, id, _end }]);
     });
     this.items.forEach((item) => bangumiCallback(...item));
   }

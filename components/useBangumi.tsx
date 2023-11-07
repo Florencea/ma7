@@ -1,6 +1,7 @@
 import { useInfiniteScroll } from "ahooks";
 import { useCallback, useMemo, useRef, useState, useTransition } from "react";
 import useSWR from "swr";
+import { FullBangumiT } from "../crawler-storage";
 import { Card } from "./Card";
 
 export interface ResultT {
@@ -9,16 +10,7 @@ export interface ResultT {
   isNoMore: boolean;
 }
 
-export interface BangumiT {
-  id: number;
-  title: string;
-  info: string;
-  start: string;
-  by: string;
-  site: string;
-  total: string;
-  stat: string;
-}
+export type BangumiT = Omit<FullBangumiT, "_end" | "_imgUrl">;
 
 const BANGUMIS_PER_PAGE = 12;
 

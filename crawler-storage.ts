@@ -1,11 +1,43 @@
+import { ConfigurationOptions, Request } from "crawlee";
 import dayjs from "dayjs";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { copyFile } from "node:fs/promises";
 import { join } from "node:path";
-import { FullBangumiT } from "./crawler-config";
+import sharp, { FormatEnum } from "sharp";
 import { Logger } from "./crawler-logger";
 
+export type FullBangumiT = {
+  id: number;
+  _end: boolean;
+  title: string;
+  _imgUrl: string;
+  info: string;
+  start: string;
+  by: string;
+  site: string;
+  total: string;
+  stat: string;
+};
+
 export class Storage {
+  public static CRAWLER_CONFIG = {
+    maxConcurrency: 50,
+    maxRequestRetries: 3,
+    requestHandlerTimeoutSecs: 30,
+    retryOnBlocked: true,
+  };
+  public static CRAWLER_OPTIONS: ConfigurationOptions = {
+    logLevel: 1,
+    persistStorage: false,
+  };
+  public static IMAGE_MIMETYPE = [
+    "image/jpeg",
+    "image/png",
+    "image/avif",
+    "image/webp",
+    "image/bmp",
+    "image/gif",
+  ];
   private __dirname = process.cwd();
   private DB_DIR_PATH = join(this.__dirname, "public");
   private DB_PATH = join(this.DB_DIR_PATH, "data.json");
@@ -18,6 +50,7 @@ export class Storage {
   private IMAGE_DUPLICATEID_MAP = new Map([[45295, 45299]]);
   private ONAIR_URL = "https://myself-bbs.com/forum-133-1.html";
   private ENDED_URL = "https://myself-bbs.com/forum-113-1.html";
+  private IMG_FORMAT: keyof FormatEnum = "avif";
   private storage: Map<number, FullBangumiT>;
   private pages: Set<string>;
   private imgs: Map<string, number>;
@@ -120,6 +153,23 @@ export class Storage {
     this.logger.info(`Restore ${this.copyImgUrls.length} images from cache`);
     this.writeImgUrlsCacheList();
   }
+  public async saveImg(request: Request, body: string | Buffer) {
+    const bangumiId = this.getImgId(request.url);
+    const img = this.generateImgFileName(bangumiId);
+    const { source, destination } = this.getPublicCopyParams(img);
+    await sharp(body).toFormat(this.IMG_FORMAT).toFile(source);
+    await this.safeCopy(source, destination);
+    await this.saveDuplicateImg(bangumiId, body);
+  }
+  private async saveDuplicateImg(bangumiId: number, body: string | Buffer) {
+    const bangumiIdDuplicate = this.IMAGE_DUPLICATEID_MAP.get(bangumiId);
+    if (bangumiIdDuplicate) {
+      const img = this.generateImgFileName(bangumiIdDuplicate);
+      const { source, destination } = this.getPublicCopyParams(img);
+      await sharp(body).toFormat(this.IMG_FORMAT).toFile(source);
+      await this.safeCopy(source, destination);
+    }
+  }
   public async logImgFetchResult() {
     this.logger.info(
       `Complete fetch ${
@@ -152,7 +202,7 @@ export class Storage {
         const bangumiId = this.getImgId(imgUrl);
         const img = this.generateImgFileName(bangumiId);
         const { source, destination } = this.getCacheCopyParams(img);
-        await this.handleDuplicateImg(bangumiId);
+        await this.handleDuplicateCacheImg(bangumiId);
         await this.safeCopy(source, destination);
       }),
     );
@@ -161,7 +211,7 @@ export class Storage {
     const imgUrlsTxt = this.toCacheImgUrls.join("\n");
     writeFileSync(this.CACHE_FILE_PATH, imgUrlsTxt);
   }
-  private async handleDuplicateImg(bangumiId: number) {
+  private async handleDuplicateCacheImg(bangumiId: number) {
     const bangumiIdDuplicate = this.IMAGE_DUPLICATEID_MAP.get(bangumiId);
     if (bangumiIdDuplicate) {
       const img = this.generateImgFileName(bangumiIdDuplicate);
@@ -183,6 +233,11 @@ export class Storage {
     const destination = join(this.IMG_DIR_PATH, file);
     return { source, destination };
   }
+  private getPublicCopyParams(file: string) {
+    const source = join(this.IMG_DIR_PATH, file);
+    const destination = join(this.CACHE_DIR_PATH, file);
+    return { source, destination };
+  }
   private async safeCopy(source: string, destination: string) {
     if (existsSync(source)) {
       await copyFile(source, destination);
@@ -191,6 +246,6 @@ export class Storage {
     }
   }
   private generateImgFileName(id: number) {
-    return `${id}.avif`;
+    return `${id}.${this.IMG_FORMAT}`;
   }
 }
