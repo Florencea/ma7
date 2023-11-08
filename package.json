@@ -8,7 +8,7 @@
     "crawl": "tsx crawler"
   },
   "dependencies": {
-    "@types/react": "^18.2.36",
+    "@types/react": "^18.2.37",
     "ahooks": "^3.7.8",
     "crawlee": "^3.5.8",
     "dayjs": "^1.11.10",
@@ -22,8 +22,8 @@
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.34",
-    "@types/node": "^20.8.10",
-    "@types/react-dom": "^18.2.14",
+    "@types/node": "^20.9.0",
+    "@types/react-dom": "^18.2.15",
     "eslint": "^8.53.0",
     "eslint-config-next": "^14.0.1",
     "eslint-config-prettier": "^9.0.0",
