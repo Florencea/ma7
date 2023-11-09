@@ -37,8 +37,8 @@ export class BangumiParser {
   ) {
     this.$ = $;
     this.id = this.getId(request.url);
-    const bangumi_index_data = DB.get(this.id) as FullBangumiT;
-    this._end = bangumi_index_data._end;
+    const bangumi_index_data = DB.get(this.id);
+    this._end = bangumi_index_data?._end ?? true;
     this.title = this.getTitle();
     this._imgUrl = this.getImg();
     this.info = this.getInfo();
@@ -122,7 +122,7 @@ export class BangumiParser {
     return this.$(".main_list li:has(ul)")
       .map((_, el) => {
         const videoIdStr =
-          this.$(el).find("a[data-href*=myself]").attr("data-href") || "";
+          this.$(el).find("a[data-href*=myself]").attr("data-href") ?? "";
         if (this.checkIsValidVideo(videoIdStr)) {
           const title = this.$(el).find('li > a[href="javascript:;"]').text();
           return { title };
@@ -136,7 +136,7 @@ export class BangumiParser {
     return this._end
       ? ""
       : `${
-          (this._totalEpisodes ?? -1) < 0
+          this._totalEpisodes < 0
             ? "(總集數未定)"
             : `(共 ${this._totalEpisodes} 話)`
         }`;

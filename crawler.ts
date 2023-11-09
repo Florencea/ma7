@@ -1,4 +1,10 @@
-import { CheerioCrawler, Configuration, HttpCrawler } from "crawlee";
+import {
+  CheerioCrawler,
+  CheerioCrawlerOptions,
+  Configuration,
+  Dictionary,
+  HttpCrawler,
+} from "crawlee";
 import { BangumiParser } from "./crawler-bangumi-parser";
 import { ContentParser } from "./crawler-content-parser";
 import { IndexParser } from "./crawler-index-parser";
@@ -15,7 +21,7 @@ const ImageCrawler = new HttpCrawler(
     additionalMimeTypes: Storage.IMAGE_MIMETYPE,
     requestHandler: async ({ request, body, response }) => {
       try {
-        storage.saveImg(request, body);
+        await storage.saveImg(request, body);
       } catch {
         storage.removeImg(request.url);
         logger.error(
@@ -30,20 +36,24 @@ const ImageCrawler = new HttpCrawler(
 const BangumiCrawler = new CheerioCrawler(
   {
     ...Storage.CRAWLER_CONFIG,
-    requestHandler: async ({ request, $ }) => {
+    requestHandler: ({ request, $ }) => {
       const bangumiParser = new BangumiParser(request, $, storage.getStorage());
-      bangumiParser.parse((id, bangumi) => storage.addBangumi(id, bangumi));
+      bangumiParser.parse((id, bangumi) => {
+        storage.addBangumi(id, bangumi);
+      });
     },
-  },
+  } as CheerioCrawlerOptions<Dictionary>,
   new Configuration(Storage.CRAWLER_OPTIONS),
 );
 
 const ContentCrawler = new CheerioCrawler(
   {
     ...Storage.CRAWLER_CONFIG,
-    requestHandler: async ({ $ }) => {
+    requestHandler: ({ $ }) => {
       const contentParser = new ContentParser($);
-      contentParser.parse((id, bangumi) => storage.addBangumi(id, bangumi));
+      contentParser.parse((id, bangumi) => {
+        storage.addBangumi(id, bangumi);
+      });
     },
   },
   new Configuration(Storage.CRAWLER_OPTIONS),
@@ -52,11 +62,13 @@ const ContentCrawler = new CheerioCrawler(
 const IndexCrawler = new CheerioCrawler(
   {
     ...Storage.CRAWLER_CONFIG,
-    requestHandler: async ({ request, $ }) => {
+    requestHandler: ({ request, $ }) => {
       const indexParser = new IndexParser(request, $);
-      indexParser.parse((url) => storage.addPage(url));
+      indexParser.parse((url) => {
+        storage.addPage(url);
+      });
     },
-  },
+  } as CheerioCrawlerOptions<Dictionary>,
   new Configuration(Storage.CRAWLER_OPTIONS),
 );
 
@@ -64,10 +76,10 @@ export default async function crawler() {
   await IndexCrawler.run(storage.getIndexUrls());
   await ContentCrawler.run(storage.getPageUrls());
   await BangumiCrawler.run(storage.generateBangumiUrls());
-  await storage.save();
+  storage.save();
   await storage.restoreImgCache();
   await ImageCrawler.run(storage.getFetchImgUrls());
-  await storage.logImgFetchResult();
+  storage.logImgFetchResult();
 }
 
-crawler();
+await crawler();

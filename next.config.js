@@ -9,23 +9,25 @@ const nextConfig = {
   },
   eslint: {
     ignoreDuringBuilds: !isDev,
+    dirs: ["."],
   },
   typescript: {
     ignoreBuildErrors: !isDev,
   },
   redirects: isDev
-    ? async () => [
-        {
-          source: "/data.json",
-          destination: "https://ma7.pages.dev/data.json",
-          permanent: true,
-        },
-        {
-          source: "/img/:path*",
-          destination: "https://ma7.pages.dev/img/:path*",
-          permanent: true,
-        },
-      ]
+    ? async () =>
+        Promise.resolve([
+          {
+            source: "/data.json",
+            destination: "https://ma7.pages.dev/data.json",
+            permanent: true,
+          },
+          {
+            source: "/img/:path*",
+            destination: "https://ma7.pages.dev/img/:path*",
+            permanent: true,
+          },
+        ])
     : undefined,
 };
 

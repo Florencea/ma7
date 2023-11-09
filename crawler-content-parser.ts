@@ -25,7 +25,9 @@ export class ContentParser {
       const _end = this.getEnd(el);
       this.items.push([id, { ...this.EMPTY_BANGUMI, id, _end }]);
     });
-    this.items.forEach((item) => bangumiCallback(...item));
+    this.items.forEach((item) => {
+      bangumiCallback(...item);
+    });
   }
   private getId(el: cheerio.Element) {
     const id_link = this.$(el).children("a").attr("href");

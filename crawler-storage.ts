@@ -1,4 +1,10 @@
-import { ConfigurationOptions, Request } from "crawlee";
+import {
+  ConfigurationOptions,
+  Dictionary,
+  HttpCrawlerOptions,
+  InternalHttpCrawlingContext,
+  Request,
+} from "crawlee";
 import dayjs from "dayjs";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { copyFile } from "node:fs/promises";
@@ -6,7 +12,7 @@ import { join } from "node:path";
 import sharp, { FormatEnum } from "sharp";
 import { Logger } from "./crawler-logger";
 
-export type FullBangumiT = {
+export interface FullBangumiT {
   id: number;
   _end: boolean;
   title: string;
@@ -17,10 +23,12 @@ export type FullBangumiT = {
   site: string;
   total: string;
   stat: string;
-};
+}
 
 export class Storage {
-  public static CRAWLER_CONFIG = {
+  public static CRAWLER_CONFIG: HttpCrawlerOptions<
+    InternalHttpCrawlingContext<Dictionary, Dictionary>
+  > = {
     maxConcurrency: 50,
     maxRequestRetries: 3,
     requestHandlerTimeoutSecs: 30,
@@ -104,7 +112,7 @@ export class Storage {
     this.storage.set(id, bangumi);
   }
   public getImgId(imgUrl: string) {
-    return this.imgs.get(imgUrl)!;
+    return this.imgs.get(imgUrl) ?? 0;
   }
   public getImgSize() {
     return this.imgs.size;
@@ -115,7 +123,7 @@ export class Storage {
   public getImgUrls() {
     return [...this.imgs.keys()];
   }
-  public async save() {
+  public save() {
     const rawData = [...this.storage.values()];
     const db_data = rawData
       .sort((a, b) => {
@@ -134,7 +142,16 @@ export class Storage {
         // default by id reverse
         return b.id - a.id;
       })
-      .map(({ _end, _imgUrl, ...rest }) => rest);
+      .map(({ id, title, info, start, by, site, total, stat }) => ({
+        id,
+        title,
+        info,
+        start,
+        by,
+        site,
+        total,
+        stat,
+      }));
     const db_json = JSON.stringify(db_data);
     mkdirSync(this.DB_DIR_PATH, { recursive: true });
     writeFileSync(this.DB_PATH, db_json);
@@ -170,7 +187,7 @@ export class Storage {
       await this.safeCopy(source, destination);
     }
   }
-  public async logImgFetchResult() {
+  public logImgFetchResult() {
     this.logger.info(
       `Complete fetch ${
         this.fetchImgUrls.length - (this.imgs.size - this.imgSizeBeforeFetch)
