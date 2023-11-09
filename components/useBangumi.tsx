@@ -91,7 +91,7 @@ const useBangumi = () => {
           boxSizing: "border-box",
         }}
       >
-        {data?.list?.map((item, index) => (
+        {data?.list.map((item, index) => (
           <Card
             key={index}
             bangumi={item}

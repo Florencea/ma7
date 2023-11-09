@@ -36,7 +36,9 @@ export const Card = ({
               userSelect: "none",
               cursor: "pointer",
             }}
-            onClick={() => setCurrentBagumi(open ? undefined : bangumi)}
+            onClick={() => {
+              setCurrentBagumi(bangumi);
+            }}
           >
             <source srcSet={`/img/${bangumi.id}.avif`} type="image/avif" />
             <img
@@ -89,7 +91,9 @@ export const Card = ({
                 cursor: "pointer",
                 flexShrink: 0,
               }}
-              onClick={() => setCurrentBagumi(open ? undefined : bangumi)}
+              onClick={() => {
+                setCurrentBagumi(undefined);
+              }}
             >
               <source srcSet={`/img/${bangumi.id}.avif`} type="image/avif" />
               <img
