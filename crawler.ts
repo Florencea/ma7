@@ -82,4 +82,8 @@ export default async function crawler() {
   storage.logImgFetchResult();
 }
 
-await crawler();
+function main() {
+  void crawler();
+}
+
+main();
