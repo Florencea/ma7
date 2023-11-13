@@ -13,21 +13,26 @@ jobs:
     env:
       NODE_ENV: production
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up node
+        uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
-      - uses: actions/cache@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Restore cache
+        uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/.next/cache
           key: ${{ runner.os }}-cache
-      - run: npm run crawl
-      - run: npm run build
-      - uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: f335dee5609bac21c6bdf7b9a0a68b9d
-          projectName: ma7
-          directory: out
+      - name: Fetch data
+        run: npm run crawl
+      - name: Build site
+        run: npm run build
+      - name: Deploy to Cloudflare Pages
+        run: |
+          export CLOUDFLARE_API_TOKEN=${{ secrets.CLOUDFLARE_API_TOKEN }}
+          export CLOUDFLARE_ACCOUNT_ID=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          npx wrangler pages deploy out --project-name=ma7 --branch=main
