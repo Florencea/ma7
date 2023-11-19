@@ -1,7 +1,6 @@
 {
   "name": "ma7",
   "version": "1.0.0",
-  "type": "commonjs",
   "private": true,
   "scripts": {
     "dev": "next dev",
