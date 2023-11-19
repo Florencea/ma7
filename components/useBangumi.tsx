@@ -1,7 +1,7 @@
 import { useInfiniteScroll } from "ahooks";
 import { useCallback, useMemo, useRef, useState, useTransition } from "react";
 import useSWR from "swr";
-import { FullBangumiT } from "../crawler-storage";
+import type { FullBangumiT } from "../crawler-storage";
 import { Card } from "./Card";
 
 export interface ResultT {

@@ -1,4 +1,4 @@
-import { Request } from "crawlee";
+import type { Request } from "crawlee";
 
 export class IndexParser {
   private urls: string[];

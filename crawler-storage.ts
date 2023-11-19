@@ -9,7 +9,8 @@ import dayjs from "dayjs";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { copyFile } from "node:fs/promises";
 import { join } from "node:path";
-import sharp, { FormatEnum } from "sharp";
+import type { FormatEnum } from "sharp";
+import sharp from "sharp";
 import { Logger } from "./crawler-logger";
 
 export interface FullBangumiT {

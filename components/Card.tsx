@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction } from "react";
-import { BangumiT } from "./useBangumi";
+import type { Dispatch, SetStateAction } from "react";
+import type { BangumiT } from "./useBangumi";
 
 interface Props {
   bangumi: BangumiT;

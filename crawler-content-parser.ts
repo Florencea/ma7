@@ -1,4 +1,4 @@
-import { FullBangumiT } from "./crawler-storage";
+import type { FullBangumiT } from "./crawler-storage";
 
 export class ContentParser {
   private EMPTY_BANGUMI: FullBangumiT = {

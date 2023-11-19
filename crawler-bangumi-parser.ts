@@ -1,7 +1,7 @@
-import { Request } from "crawlee";
+import type { Request } from "crawlee";
 import dayjs from "dayjs";
 import CustomParseFormat from "dayjs/plugin/customParseFormat.js";
-import { FullBangumiT } from "./crawler-storage";
+import type { FullBangumiT } from "./crawler-storage";
 dayjs.extend(CustomParseFormat);
 
 export class BangumiParser {
