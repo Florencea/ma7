@@ -1,9 +1,9 @@
 import {
   CheerioCrawler,
-  CheerioCrawlerOptions,
   Configuration,
-  Dictionary,
   HttpCrawler,
+  type CheerioCrawlerOptions,
+  type Dictionary,
 } from "crawlee";
 import type { Response } from "got";
 import { BangumiParser } from "./crawler-bangumi-parser";
