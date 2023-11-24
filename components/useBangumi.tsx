@@ -108,22 +108,17 @@ const useBangumi = () => {
       <div
         style={{
           width: 50,
+          textAlign: "right",
           cursor: "default",
           userSelect: "none",
           backgroundColor: "transparent",
           color: bangumiData.length === rawData?.length ? "gray" : "white",
           padding: 8,
-          paddingRight: 8,
           outline: 0,
           lineHeight: 1,
-          display: "flex",
-          alignItems: "center",
         }}
       >
-        <div>▶️</div>
-        <div style={{ textAlign: "right", flexGrow: 1 }}>
-          {bangumiData.length}
-        </div>
+        {bangumiData.length}
       </div>
     ),
     [bangumiData.length, rawData?.length],

@@ -147,15 +147,12 @@ export const Card = ({
                     backgroundColor: "white",
                     padding: "8px 12px",
                     textDecoration: "none",
-                    display: "flex",
-                    gap: 4,
                   }}
                   target="_blank"
                   rel="noreferrer"
                   href={`https://myself-bbs.com/thread-${bangumi.id}-1-1.html`}
                 >
-                  <span>▶️</span>
-                  <span>前往網頁</span>
+                  前往網頁
                 </a>
               </div>
             </div>
