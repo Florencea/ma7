@@ -17,17 +17,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Setup jq
-        uses: dcarbone/install-jq-action@v2.1.0
-      - name: Get Latest Node.js LTS version
-        run: echo "NODE_VERSION=$(curl -fsSL https://nodejs.org/download/release/index.json | jq -cr 'last( sort_by( .date | split("-") | map(tonumber) ) | .[] | select(.lts) ) | .version')" >> $GITHUB_ENV
       - name: Set up node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: 20
           cache: npm
-      - name: Update npm
-        run: npm install --audit false --fund false --loglevel error --progress false --global true npm
       - name: Install dependencies
         run: npm ci
       - name: Restore cache
