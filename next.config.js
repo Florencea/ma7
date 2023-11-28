@@ -1,3 +1,5 @@
+// @ts-check
+
 const isDev = !(process.env.NODE_ENV === "production");
 
 /** @type {import('next').NextConfig} */
@@ -6,13 +8,6 @@ const nextConfig = {
   reactStrictMode: true,
   compiler: {
     removeConsole: !isDev,
-  },
-  eslint: {
-    ignoreDuringBuilds: !isDev,
-    dirs: ["."],
-  },
-  typescript: {
-    ignoreBuildErrors: !isDev,
   },
   redirects: isDev
     ? async () =>
