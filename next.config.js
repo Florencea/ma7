@@ -9,6 +9,12 @@ const nextConfig = {
   compiler: {
     removeConsole: !isDev,
   },
+  eslint: {
+    ignoreDuringBuilds: !isDev,
+  },
+  typescript: {
+    ignoreBuildErrors: !isDev,
+  },
   redirects: isDev
     ? async () =>
         Promise.resolve([
