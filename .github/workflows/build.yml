@@ -22,7 +22,7 @@ jobs:
       - name: Get Latest Node.js LTS version
         run: echo "NODE_VERSION=$(curl -fsSL https://nodejs.org/download/release/index.json | jq -cr 'last( sort_by( .date | split("-") | map(tonumber) ) | .[] | select(.lts) ) | .version')" >> $GITHUB_ENV
       - name: Set up node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
