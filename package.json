@@ -10,6 +10,8 @@
     "crawl": "tsc --project crawler/tsconfig.json && node crawler/crawler.js"
   },
   "dependencies": {
+    "@types/cheerio": "^0.22.35",
+    "@types/got": "^9.6.12",
     "@types/react": "^18.2.39",
     "ahooks": "^3.7.8",
     "crawlee": "^3.6.2",
@@ -24,8 +26,6 @@
     "wrangler": "^3.17.1"
   },
   "devDependencies": {
-    "@types/cheerio": "^0.22.35",
-    "@types/got": "^9.6.12",
     "@types/node": "^20.10.0",
     "@types/react-dom": "^18.2.17",
     "eslint": "^8.54.0",
