@@ -47,11 +47,11 @@ export class Storage {
     "image/bmp",
     "image/gif",
   ];
-  private __dirname = process.cwd();
-  private DB_DIR_PATH = join(this.__dirname, "public");
+  private CURRENT_DIR = join(__dirname, "..");
+  private DB_DIR_PATH = join(this.CURRENT_DIR, "public");
   private DB_PATH = join(this.DB_DIR_PATH, "data.json");
   private IMG_DIR_PATH = join(this.DB_DIR_PATH, "img");
-  private CACHE_DIR_PATH = join(__dirname, ".next", "cache", "img");
+  private CACHE_DIR_PATH = join(this.CURRENT_DIR, ".next", "cache", "img");
   private CACHE_FILE_PATH = join(this.CACHE_DIR_PATH, "cache.txt");
   private IMAGE_404_LIST = [
     "https://myself-bbs.com/data/attachment/forum/201607/09/1037264653qk9qn949kgqs.jpg",
