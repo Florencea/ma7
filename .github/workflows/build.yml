@@ -20,7 +20,7 @@ jobs:
       - name: Setup jq
         uses: dcarbone/install-jq-action@v2.1.0
       - name: Get Latest Node.js LTS version
-        run: echo "NODE_VERSION=$(curl -fsSL https://nodejs.org/download/release/index.json | jq -cr 'last( sort_by( .date | split("-") | map(tonumber) ) | .[] | select(.lts) ) | .version')" >> $GITHUB_ENV
+        run: echo "NODE_VERSION=$(curl -fsSL https://nodejs.org/download/release/index.json | jq -cr 'last( sort_by( .version | split("v") | .[1] | split(".") | map(tonumber) ) | .[] | select( .lts ) | .version )')" >> $GITHUB_ENV
       - name: Set up node
         uses: actions/setup-node@v4
         with:
