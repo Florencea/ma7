@@ -1,4 +1,4 @@
-name: Update Data And Publish Site
+name: Cloudflare Pages
 on:
   push:
     branches:

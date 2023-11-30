@@ -1,5 +1,7 @@
 # MA7
 
+![Cloudflare Pages](https://github.com/Florencea/ma7/actions/workflows/build.yml/badge.svg)
+
 - <https://ma7.pages.dev/>
 - A SUPER FAST⚡️ site for indexing <https://myself-bbs.com/>
 
