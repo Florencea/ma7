@@ -10,7 +10,7 @@ permissions:
   checks: write
 env:
   CI: true
-  NODE_ENV: production
+  NODE_ENV: development
   COMMIT_MSG_BODY: ""
 jobs:
   upgrade:
