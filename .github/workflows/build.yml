@@ -1,4 +1,5 @@
 name: Cloudflare Pages
+
 on:
   push:
     branches:
@@ -12,31 +13,38 @@ on:
     types:
       - completed
   workflow_dispatch:
+
 env:
   NODE_ENV: production
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Set up node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: lts/*
-          check-latest: true
+          node-version-file: .nvmrc
           cache: npm
+
       - name: Install dependencies
         run: npm ci
+
       - name: Restore cache
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/.next/cache
           key: ${{ runner.os }}-cache
+
       - name: Fetch data
         run: npm run crawl
+
       - name: Build site
         run: npm run build
+
       - name: Deploy to Cloudflare Pages
         run: |
           export CLOUDFLARE_API_TOKEN=${{ secrets.CLOUDFLARE_API_TOKEN }}
