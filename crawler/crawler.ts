@@ -5,7 +5,6 @@ import {
   type CheerioCrawlerOptions,
   type Dictionary,
 } from "crawlee";
-import type { Response } from "got";
 import { BangumiParser } from "./crawler-bangumi-parser";
 import { ContentParser } from "./crawler-content-parser";
 import { IndexParser } from "./crawler-index-parser";
@@ -25,7 +24,7 @@ const ImageCrawler = new HttpCrawler(
         await storage.saveImg(request, body);
       } catch {
         storage.removeImg(request.url);
-        const { statusCode, statusMessage } = response as Response<Buffer>;
+        const { statusCode, statusMessage } = response;
         logger.error(
           `[retry ${request.retryCount}] [${statusCode}: ${statusMessage}] ${request.url}`,
         );
