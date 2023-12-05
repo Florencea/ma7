@@ -12,7 +12,7 @@
   "dependencies": {
     "@types/cheerio": "^0.22.35",
     "@types/got": "^9.6.12",
-    "@types/react": "^18.2.41",
+    "@types/react": "^18.2.42",
     "ahooks": "^3.7.8",
     "crawlee": "^3.6.2",
     "dayjs": "^1.11.10",
@@ -22,7 +22,7 @@
     "sharp": "^0.33.0",
     "swr": "^2.2.4",
     "typescript": "^5.3.2",
-    "wrangler": "^3.18.0"
+    "wrangler": "^3.19.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.3",
