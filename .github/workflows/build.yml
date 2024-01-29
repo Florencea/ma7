@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Restore cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.next/cache
           key: ma7-${{ runner.os }}
