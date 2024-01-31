@@ -165,7 +165,6 @@ const useBangumi = () => {
     () => (
       <select
         aria-label="year search"
-        placeholder="YEARS"
         style={{
           appearance: "none",
           cursor: "pointer",
