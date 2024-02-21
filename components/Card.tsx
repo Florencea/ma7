@@ -15,161 +15,60 @@ export const Card = ({
 }: Props) => {
   const open = currentBangumi?.id === bangumi.id;
   return (
-    <div
-      style={{
-        flexShrink: 0,
-        display: "flex",
-        flexDirection: "column",
-        width: open ? undefined : 125,
-        gridColumn: open ? "span 4" : undefined,
-        gridRow: open ? "span 3" : undefined,
-        userSelect: open ? undefined : "none",
-      }}
-    >
+    <article className={open ? "open" : undefined}>
       {!open ? (
         <>
           <picture
-            style={{
-              width: 125,
-              height: 175,
-              position: "relative",
-              userSelect: "none",
-              cursor: "pointer",
-            }}
             onClick={() => {
               setCurrentBagumi(bangumi);
             }}
           >
             <source srcSet={`/img/${bangumi.id}.avif`} type="image/avif" />
-            <img
-              src={`/img/${bangumi.id}.avif`}
-              alt={bangumi.title}
-              style={{ width: 125, height: 175 }}
-            />
+            <img src={`/img/${bangumi.id}.avif`} alt={bangumi.title} />
           </picture>
-          <div
-            style={{
-              marginTop: 8,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-            title={bangumi.title}
-          >
-            {bangumi.title}
-          </div>
-          <div
-            style={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              color: "gray",
-            }}
-            title={bangumi.stat}
-          >
-            {bangumi.stat}
-          </div>
+          <h1 title={bangumi.title}>{bangumi.title}</h1>
+          <h2 title={bangumi.stat}>{bangumi.stat}</h2>
         </>
       ) : (
-        <div
-          style={{
-            position: "relative",
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            gap: 12,
-            paddingRight: 4,
-          }}
-        >
-          <div style={{ display: "flex", gap: 12 }}>
+        <>
+          <header>
             <picture
-              style={{
-                width: 250,
-                height: 350,
-                position: "relative",
-                userSelect: "none",
-                cursor: "pointer",
-                flexShrink: 0,
-              }}
               onClick={() => {
                 setCurrentBagumi(undefined);
               }}
             >
               <source srcSet={`/img/${bangumi.id}.avif`} type="image/avif" />
-              <img
-                src={`/img/${bangumi.id}.avif`}
-                alt={bangumi.title}
-                style={{ width: 250, height: 350 }}
-              />
+              <img src={`/img/${bangumi.id}.avif`} alt={bangumi.title} />
             </picture>
-            <div
-              style={{
-                flexGrow: 1,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                gap: 8,
-                border: "1px solid #fff",
-                padding: 12,
-                boxSizing: "border-box",
-              }}
-            >
-              <div
-                style={{
-                  flexGrow: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 4,
-                }}
-              >
-                <div>{bangumi.title}</div>
-                <div>
+            <section>
+              <ul>
+                <li>{bangumi.title}</li>
+                <li>
                   {bangumi.stat} {bangumi.total}
-                </div>
-                <div>首播日期: {bangumi.start}</div>
-                <div>原著作者: {bangumi.by}</div>
-                <div>
+                </li>
+                <li>首播日期: {bangumi.start}</li>
+                <li>原著作者: {bangumi.by}</li>
+                <li>
                   官方網站:{" "}
-                  <a
-                    style={{ color: "white" }}
-                    target="_blank"
-                    rel="noreferrer"
-                    href={bangumi.site}
-                  >
+                  <a target="_blank" rel="noreferrer" href={bangumi.site}>
                     {bangumi.site}
                   </a>
-                </div>
-              </div>
-              <div style={{ display: "flex", justifyContent: "end" }}>
+                </li>
+              </ul>
+              <footer>
                 <a
-                  style={{
-                    color: "black",
-                    backgroundColor: "white",
-                    padding: "8px 12px",
-                    textDecoration: "none",
-                  }}
                   target="_blank"
                   rel="noreferrer"
                   href={`https://myself-bbs.com/thread-${bangumi.id}-1-1.html`}
                 >
                   前往網頁
                 </a>
-              </div>
-            </div>
-          </div>
-          <div
-            style={{
-              flexGrow: 1,
-              border: "1px solid #fff",
-              padding: 12,
-              overflowY: "scroll",
-              lineHeight: 1.8,
-            }}
-          >
-            {bangumi.info}
-          </div>
-        </div>
+              </footer>
+            </section>
+          </header>
+          <section>{bangumi.info}</section>
+        </>
       )}
-    </div>
+    </article>
   );
 };

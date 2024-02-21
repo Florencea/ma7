@@ -75,22 +75,7 @@ const useBangumi = () => {
 
   const bangumiList = useMemo(
     () => (
-      <div
-        ref={target}
-        style={{
-          width: "100%",
-          flexGrow: 1,
-          alignContent: "start",
-          overflowY: "scroll",
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(125px, 1fr))",
-          placeItems: "stretch",
-          gap: 8,
-          paddingLeft: 8,
-          paddingRight: 8,
-          boxSizing: "border-box",
-        }}
-      >
+      <main ref={target}>
         {data?.list.map((item, index) => (
           <Card
             key={index}
@@ -98,7 +83,7 @@ const useBangumi = () => {
             currentBangumiState={[currentBangumi, setCurrentBangumi]}
           />
         ))}
-      </div>
+      </main>
     ),
     [currentBangumi, data?.list],
   );
@@ -106,17 +91,7 @@ const useBangumi = () => {
   const countBox = useMemo(
     () => (
       <div
-        style={{
-          width: 50,
-          textAlign: "right",
-          cursor: "default",
-          userSelect: "none",
-          backgroundColor: "transparent",
-          color: bangumiData.length === rawData?.length ? "gray" : "white",
-          padding: 8,
-          outline: 0,
-          lineHeight: 1,
-        }}
+        className={`countbox ${bangumiData.length === rawData?.length ? "unset" : ""}`}
       >
         {bangumiData.length}
       </div>
@@ -127,17 +102,9 @@ const useBangumi = () => {
   const keywordSearch = useMemo(
     () => (
       <input
+        className="input-box"
         type="text"
         placeholder="TITLE / AUTHOR / INFO"
-        style={{
-          width: 200,
-          backgroundColor: "transparent",
-          color: "white",
-          padding: 8,
-          outline: 0,
-          border: "1px solid gray",
-          lineHeight: 1,
-        }}
         value={keyword}
         onChange={(e) => {
           setKeyword(e.target.value);
@@ -164,19 +131,8 @@ const useBangumi = () => {
   const startSearch = useMemo(
     () => (
       <select
+        className={`input-box ${start === "-" ? "unset" : ""}`}
         aria-label="year search"
-        style={{
-          appearance: "none",
-          cursor: "pointer",
-          width: 80,
-          backgroundColor: "transparent",
-          color: start === "-" ? "gray" : "white",
-          padding: 8,
-          boxSizing: "border-box",
-          outline: 0,
-          border: "1px solid gray",
-          lineHeight: 1,
-        }}
         value={start}
         onChange={(e) => {
           setStart(e.target.value);
@@ -202,22 +158,7 @@ const useBangumi = () => {
   const resetBtn = useMemo(
     () => (
       <button
-        style={{
-          userSelect: "none",
-          appearance: "none",
-          cursor:
-            bangumiData.length === rawData?.length ? "not-allowed" : "pointer",
-          width: 80,
-          backgroundColor: "transparent",
-          color: bangumiData.length === rawData?.length ? "gray" : "white",
-          padding: 8,
-          outline: 0,
-          border:
-            bangumiData.length === rawData?.length
-              ? "1px solid gray"
-              : "1px solid white",
-          lineHeight: 1,
-        }}
+        className={`input-box ${bangumiData.length === rawData?.length ? "unset" : ""}`}
         onClick={() => {
           setKeyword("");
           setStart("-");
