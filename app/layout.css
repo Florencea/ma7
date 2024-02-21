@@ -57,6 +57,7 @@ nav > .unset {
 
 nav > .input-box {
   appearance: none;
+  background-color: transparent;
   width: 200px;
   padding: 8px;
   outline: 0;
