@@ -12,7 +12,7 @@
   "dependencies": {
     "@types/cheerio": "^0.22.35",
     "@types/got": "^9.6.12",
-    "@types/react": "^18.2.57",
+    "@types/react": "^18.2.58",
     "ahooks": "^3.7.10",
     "crawlee": "^3.8.1",
     "dayjs": "^1.11.10",
