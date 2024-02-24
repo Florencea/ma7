@@ -1,3 +1,4 @@
+import { clsx } from "clsx";
 import type { Dispatch, SetStateAction } from "react";
 import type { BangumiT } from "./useBangumi";
 
@@ -15,24 +16,49 @@ export const Card = ({
 }: Props) => {
   const open = currentBangumi?.id === bangumi.id;
   return (
-    <article className={open ? "open" : undefined}>
+    <article
+      className={clsx("flex h-full w-[125px] shrink-0 flex-col", {
+        "w-auto": open,
+        "w-[125px]": !open,
+        "col-span-4": open,
+        "row-span-3": open,
+        "gap-3": open,
+        "pr-1": open,
+      })}
+    >
       {!open ? (
         <>
           <picture
+            className="h-[175px] w-[125px] shrink-0 cursor-pointer select-none"
             onClick={() => {
               setCurrentBagumi(bangumi);
             }}
           >
             <source srcSet={`/img/${bangumi.id}.avif`} type="image/avif" />
-            <img src={`/img/${bangumi.id}.avif`} alt={bangumi.title} />
+            <img
+              className="h-[175px] w-[125px] shrink-0 cursor-pointer select-none"
+              src={`/img/${bangumi.id}.avif`}
+              alt={bangumi.title}
+            />
           </picture>
-          <h1 title={bangumi.title}>{bangumi.title}</h1>
-          <h2 title={bangumi.stat}>{bangumi.stat}</h2>
+          <h1
+            className="mt-2 overflow-hidden text-ellipsis whitespace-nowrap"
+            title={bangumi.title}
+          >
+            {bangumi.title}
+          </h1>
+          <h2
+            className="overflow-hidden text-ellipsis whitespace-nowrap text-gray-400"
+            title={bangumi.stat}
+          >
+            {bangumi.stat}
+          </h2>
         </>
       ) : (
         <>
-          <header>
+          <header className="flex">
             <picture
+              className="h-[350px] w-[250px] shrink-0 cursor-pointer select-none"
               onClick={() => {
                 setCurrentBagumi(undefined);
               }}
@@ -40,8 +66,8 @@ export const Card = ({
               <source srcSet={`/img/${bangumi.id}.avif`} type="image/avif" />
               <img src={`/img/${bangumi.id}.avif`} alt={bangumi.title} />
             </picture>
-            <section>
-              <ul>
+            <section className="flex grow flex-col justify-between gap-2 p-3">
+              <ul className="flex grow list-none flex-col gap-1">
                 <li>{bangumi.title}</li>
                 <li>
                   {bangumi.stat} {bangumi.total}
@@ -55,8 +81,9 @@ export const Card = ({
                   </a>
                 </li>
               </ul>
-              <footer>
+              <footer className="flex justify-end">
                 <a
+                  className="border px-3 py-2"
                   target="_blank"
                   rel="noreferrer"
                   href={`https://myself-bbs.com/thread-${bangumi.id}-1-1.html`}
@@ -66,7 +93,7 @@ export const Card = ({
               </footer>
             </section>
           </header>
-          <section>{bangumi.info}</section>
+          <section className="grow leading-relaxed">{bangumi.info}</section>
         </>
       )}
     </article>

@@ -14,13 +14,17 @@
     "@types/got": "^9.6.12",
     "@types/react": "^18.2.58",
     "ahooks": "^3.7.10",
+    "autoprefixer": "^10.4.17",
+    "clsx": "^2.1.0",
     "crawlee": "^3.8.1",
     "dayjs": "^1.11.10",
     "next": "^14.1.0",
+    "postcss": "^8.4.35",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sharp": "^0.33.2",
     "swr": "^2.2.5",
+    "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
     "wrangler": "^3.29.0"
   },
@@ -30,6 +34,7 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.1.0",
     "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.5.11"
   }
 }

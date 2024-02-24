@@ -7,7 +7,7 @@ export const List = () => {
 
   return (
     <>
-      <nav>
+      <nav className="flex w-full items-center justify-center gap-2 bg-white p-2 dark:bg-black">
         {countBox}
         {keywordSearch}
         {startSearch}

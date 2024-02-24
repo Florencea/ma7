@@ -1,4 +1,5 @@
 import { useInfiniteScroll } from "ahooks";
+import { clsx } from "clsx";
 import { useCallback, useMemo, useRef, useState, useTransition } from "react";
 import useSWR from "swr";
 import type { FullBangumiT } from "../crawler/crawler-storage";
@@ -75,7 +76,10 @@ const useBangumi = () => {
 
   const bangumiList = useMemo(
     () => (
-      <main ref={target}>
+      <main
+        className="grid w-full grow grid-cols-[repeat(auto-fill,minmax(125px,1fr))] place-items-stretch content-start gap-2 overflow-y-scroll px-2"
+        ref={target}
+      >
         {data?.list.map((item, index) => (
           <Card
             key={index}
@@ -91,7 +95,10 @@ const useBangumi = () => {
   const countBox = useMemo(
     () => (
       <div
-        className={`countbox ${bangumiData.length === rawData?.length ? "unset" : ""}`}
+        className={clsx(
+          "w-[50px] cursor-default select-none p-2 text-right leading-none",
+          { "text-gray-400": bangumiData.length === rawData?.length },
+        )}
       >
         {bangumiData.length}
       </div>
@@ -102,7 +109,7 @@ const useBangumi = () => {
   const keywordSearch = useMemo(
     () => (
       <input
-        className="input-box"
+        className="w-[200px] border border-gray-400 bg-transparent p-2 leading-none outline-none"
         type="text"
         placeholder="TITLE / AUTHOR / INFO"
         value={keyword}
@@ -131,7 +138,10 @@ const useBangumi = () => {
   const startSearch = useMemo(
     () => (
       <select
-        className={`input-box ${start === "-" ? "unset" : ""}`}
+        className={clsx(
+          "w-[80px] cursor-pointer appearance-none border border-gray-400 bg-transparent p-2 leading-none outline-none",
+          { "text-gray-400": start === "-", "border-gray-400": start === "-" },
+        )}
         aria-label="year search"
         value={start}
         onChange={(e) => {
@@ -158,7 +168,13 @@ const useBangumi = () => {
   const resetBtn = useMemo(
     () => (
       <button
-        className={`input-box ${bangumiData.length === rawData?.length ? "unset" : ""}`}
+        className={clsx(
+          "w-[80px] cursor-pointer border border-gray-400 bg-transparent p-2 leading-none outline-none",
+          {
+            "text-gray-400":
+              bangumiData.length === rawData?.length || !rawData?.length,
+          },
+        )}
         onClick={() => {
           setKeyword("");
           setStart("-");
