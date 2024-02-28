@@ -22,7 +22,7 @@ import {
   View,
   defaultTheme,
 } from "@adobe/react-spectrum";
-import { useInfiniteScroll, useSetState } from "ahooks";
+import { useBoolean, useInfiniteScroll, useSetState } from "ahooks";
 import { useCallback, useMemo, useRef, useTransition } from "react";
 import useSWR from "swr";
 
@@ -123,6 +123,8 @@ export const Main = ({ fallbackData }: { fallbackData: BangumiT[] }) => {
     }
   }, [rawData]);
 
+  const [dialogLinkEnable, dialogLinkEnableControl] = useBoolean(false);
+
   return (
     <Provider theme={defaultTheme} locale="zh-TW">
       <Flex height="100svh" direction="column">
@@ -156,7 +158,20 @@ export const Main = ({ fallbackData }: { fallbackData: BangumiT[] }) => {
           <Grid columns="repeat(auto-fill,minmax(125px,1fr))" gap="size-100">
             {data?.list.map((bangumi, index) => {
               return (
-                <DialogTrigger key={index} type="popover" isDismissable>
+                <DialogTrigger
+                  key={index}
+                  type="popover"
+                  isDismissable
+                  onOpenChange={(isOpen) => {
+                    if (isOpen) {
+                      setTimeout(() => {
+                        dialogLinkEnableControl.setTrue();
+                      }, 200);
+                    } else {
+                      dialogLinkEnableControl.setFalse();
+                    }
+                  }}
+                >
                   <Flex direction="column" gap="size-100">
                     <picture>
                       <source srcSet={`/img/${bangumi.id}.avif`} />
@@ -173,7 +188,7 @@ export const Main = ({ fallbackData }: { fallbackData: BangumiT[] }) => {
                       <Tooltip>{bangumi.title}</Tooltip>
                     </TooltipTrigger>
                   </Flex>
-                  <Dialog aria-label="detail">
+                  <Dialog aria-label={`${bangumi.title}詳細資訊`}>
                     <Heading>{bangumi.title}</Heading>
                     <Divider />
                     <Content>
@@ -207,6 +222,7 @@ export const Main = ({ fallbackData }: { fallbackData: BangumiT[] }) => {
                               rel="noreferrer"
                               href={bangumi.site}
                               elementType="a"
+                              isDisabled={!dialogLinkEnable}
                             >
                               官方網站
                             </Button>
@@ -218,6 +234,7 @@ export const Main = ({ fallbackData }: { fallbackData: BangumiT[] }) => {
                               rel="noreferrer"
                               href={`https://myself-bbs.com/thread-${bangumi.id}-1-1.html`}
                               elementType="a"
+                              isDisabled={!dialogLinkEnable}
                             >
                               前往網頁
                             </Button>
