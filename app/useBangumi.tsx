@@ -102,11 +102,12 @@ const useBangumi = () => {
 
   const startYears = useMemo(() => {
     if (rawData) {
-      return [...new Set(rawData.map((item) => item.start.split("-")[0]))].sort(
-        (a, b) => Number(b) - Number(a),
-      );
+      return [
+        DEFAULT_PARAMS.start,
+        ...new Set(rawData.map((item) => item.start.split("-")[0])),
+      ].sort((a, b) => Number(b) - Number(a));
     } else {
-      return [];
+      return [DEFAULT_PARAMS.start];
     }
   }, [rawData]);
 

@@ -1,11 +1,17 @@
 "use client";
 
-import { BtnReset } from "@/components/BtnReset";
 import { Card } from "@/components/Card";
-import { CountBox } from "@/components/CountBox";
-import { KeywordSearch } from "@/components/KeywordSearch";
-import { Nav } from "@/components/Nav";
-import { StartSearch } from "@/components/StartSearch";
+import {
+  ActionButton,
+  Flex,
+  Grid,
+  Item,
+  Picker,
+  Provider,
+  SearchField,
+  View,
+  defaultTheme,
+} from "@adobe/react-spectrum";
 import useBangumi from "./useBangumi";
 
 export default function Page() {
@@ -21,46 +27,49 @@ export default function Page() {
     count,
   } = useBangumi();
   return (
-    <>
-      <Nav>
-        <CountBox value={count} disabled={viewState === "fetching"} />
-        <KeywordSearch
-          value={params.keyword}
-          onChange={(e) => updateParams({ keyword: e.target.value })}
-        />
-        <StartSearch
-          initial={params.start === DEFAULT_PARAMS.start}
-          value={params.start}
-          onChange={(e) => updateParams({ start: e.target.value })}
-        >
-          <option disabled value={DEFAULT_PARAMS.start}>
-            YEAR
-          </option>
-          {startYears.map((year, idx) => (
-            <option key={idx} value={year}>
-              {year}
-            </option>
-          ))}
-        </StartSearch>
-        <BtnReset
-          disabled={viewState === "idle"}
-          onClick={() => updateParams(DEFAULT_PARAMS)}
-        >
-          RESET
-        </BtnReset>
-      </Nav>
-      <main
-        className="grid w-full grow grid-cols-[repeat(auto-fill,minmax(125px,1fr))] place-items-stretch content-start gap-2 overflow-y-scroll px-2"
-        ref={scrollContainerRef}
-      >
-        {data?.list.map((item, index) => (
-          <Card
-            key={index}
-            bangumi={item}
-            currentBangumiState={currentBangumiState}
-          />
-        ))}
-      </main>
-    </>
+    <Provider theme={defaultTheme}>
+      <title>{`MA7 - ${count} items`}</title>
+      <Flex height="100svh" direction="column">
+        <View padding="size-200">
+          <Flex gap="size-200" justifyContent="center" alignItems="center" wrap>
+            <SearchField
+              aria-label="keyword"
+              value={params.keyword}
+              onChange={(value) => updateParams({ keyword: value })}
+            />
+            <Picker
+              aria-label="year"
+              width={120}
+              disabledKeys="-"
+              selectedKey={params.start}
+              onSelectionChange={(key) => updateParams({ start: `${key}` })}
+            >
+              {startYears.map((year) => (
+                <Item key={year}>{year}</Item>
+              ))}
+            </Picker>
+            <ActionButton
+              isDisabled={viewState === "idle"}
+              onPress={() => updateParams(DEFAULT_PARAMS)}
+            >
+              Reset
+            </ActionButton>
+          </Flex>
+        </View>
+        <main className="grow overflow-y-scroll" ref={scrollContainerRef}>
+          <View paddingX="size-200">
+            <Grid columns="repeat(auto-fill,minmax(125px,1fr))" gap="size-200">
+              {data?.list.map((item, index) => (
+                <Card
+                  key={index}
+                  bangumi={item}
+                  currentBangumiState={currentBangumiState}
+                />
+              ))}
+            </Grid>
+          </View>
+        </main>
+      </Flex>
+    </Provider>
   );
 }
