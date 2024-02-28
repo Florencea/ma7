@@ -1,6 +1,6 @@
 import { clsx } from "clsx";
 import type { Dispatch, SetStateAction } from "react";
-import type { BangumiT } from "./useBangumi";
+import type { BangumiT } from "../app/useBangumi";
 
 interface Props {
   bangumi: BangumiT;

@@ -2,8 +2,8 @@ import { useInfiniteScroll } from "ahooks";
 import { clsx } from "clsx";
 import { useCallback, useMemo, useRef, useState, useTransition } from "react";
 import useSWR from "swr";
+import { Card } from "../components/Card";
 import type { FullBangumiT } from "../crawler/crawler-storage";
-import { Card } from "./Card";
 
 export interface ResultT {
   list: BangumiT[];

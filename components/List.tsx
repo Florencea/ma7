@@ -1,5 +1,5 @@
 "use client";
-import useBangumi from "./useBangumi";
+import useBangumi from "../app/useBangumi";
 
 export const List = () => {
   const { bangumiList, countBox, startSearch, keywordSearch, resetBtn } =
