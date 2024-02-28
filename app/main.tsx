@@ -104,6 +104,7 @@ export const Main = ({ fallbackData }: { fallbackData: BangumiT[] }) => {
   const updateParams = useCallback(
     <K extends keyof ParamsT>(params: Pick<ParamsT, K>) => {
       setParams(params);
+      scrollContainerRef.current?.scroll({ top: 0 });
       startTransition(() => {
         reload();
       });
@@ -124,33 +125,28 @@ export const Main = ({ fallbackData }: { fallbackData: BangumiT[] }) => {
 
   return (
     <Provider theme={defaultTheme} locale="zh-TW">
-      <title>{`MA7 - ${bangumiData.length} 部番組`}</title>
       <Flex height="100svh" direction="column">
         <View padding="size-100">
           <Flex gap="size-100" justifyContent="center" alignItems="end" wrap>
-            <SearchField
-              label="以關鍵字篩選"
-              aria-label="以關鍵字篩選"
-              value={params.keyword}
-              onChange={(value) => updateParams({ keyword: value })}
-            />
             <Picker
-              label="以年份篩選"
-              aria-label="以年份篩選"
+              label="年份"
+              aria-label="年份"
               width={120}
-              disabledKeys={DEFAULT_PARAMS.start}
               selectedKey={params.start}
               onSelectionChange={(key) => updateParams({ start: `${key}` })}
             >
               {startYears.map((year) => (
                 <Item key={year}>
-                  {year === DEFAULT_PARAMS.start ? "請選擇年份" : year}
+                  {year === DEFAULT_PARAMS.start ? "全部" : year}
                 </Item>
               ))}
             </Picker>
-            <ActionButton onPress={() => updateParams(DEFAULT_PARAMS)}>
-              重置
-            </ActionButton>
+            <SearchField
+              label={`關鍵字搜尋 - ${bangumiData.length} 部番組`}
+              aria-label={`關鍵字搜尋 - ${bangumiData.length} 部番組`}
+              value={params.keyword}
+              onChange={(value) => updateParams({ keyword: value })}
+            />
           </Flex>
         </View>
         <main

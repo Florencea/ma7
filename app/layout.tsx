@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import "tailwindcss/tailwind.css";
 
 export const metadata: Metadata = {
+  title: "MA7",
   description: "MA7",
 };
 
