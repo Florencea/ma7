@@ -1,9 +1,12 @@
-import { useInfiniteScroll } from "ahooks";
-import { clsx } from "clsx";
+import { useInfiniteScroll, useSetState } from "ahooks";
 import { useCallback, useMemo, useRef, useState, useTransition } from "react";
 import useSWR from "swr";
-import { Card } from "../components/Card";
 import type { FullBangumiT } from "../crawler/crawler-storage";
+
+export interface ParamsT {
+  keyword: string;
+  start: string;
+}
 
 export interface ResultT {
   list: BangumiT[];
@@ -13,39 +16,51 @@ export interface ResultT {
 
 export type BangumiT = Omit<FullBangumiT, "_end" | "_imgUrl">;
 
+export type ViewStateT = "fetching" | "filtered" | "idle";
+
 const BANGUMIS_PER_PAGE = 12;
 
+const DEFAULT_PARAMS: ParamsT = { keyword: "", start: "-" };
+
 const useBangumi = () => {
-  const { data: rawData } = useSWR<BangumiT[]>("/data.json", (url: string) =>
-    fetch(url).then((res) => res.json()),
+  const { data: rawData, isLoading } = useSWR<BangumiT[]>(
+    "/data.json",
+    (url: string) => fetch(url).then((res) => res.json()),
   );
 
   const [, startTransition] = useTransition();
 
-  const [keyword, setKeyword] = useState("");
-  const [start, setStart] = useState("-");
+  const [params, setParams] = useSetState<ParamsT>(DEFAULT_PARAMS);
 
-  const [currentBangumi, setCurrentBangumi] = useState<BangumiT>();
+  const currentBangumiState = useState<BangumiT>();
+  const [, setCurrentBangumi] = currentBangumiState;
 
   const bangumiData = useMemo(
     () =>
       (rawData ?? []).filter((b) => {
-        const k = keyword.toLowerCase();
+        const k = params.keyword.toLowerCase();
         const bti = b.title.toLowerCase();
         const bby = b.by.toLowerCase();
         const bin = b.info.toLowerCase();
         const bst = b.start.split("-")[0];
         const keywordFlag =
           bby.includes(k) || bti.includes(k) || bin.includes(k);
-        const startFlag = bst === start;
-        if (start === "-") {
+        const startFlag = bst === params.start;
+        if (params.start === "-") {
           return keywordFlag;
         } else {
           return keywordFlag && startFlag;
         }
       }),
-    [rawData, keyword, start],
+    [rawData, params.keyword, params.start],
   );
+
+  const viewState: ViewStateT =
+    isLoading || !rawData
+      ? "fetching"
+      : bangumiData.length === rawData.length
+        ? "idle"
+        : "filtered";
 
   const getList = useCallback(
     (d: ResultT | undefined): Promise<ResultT> => {
@@ -66,49 +81,23 @@ const useBangumi = () => {
     [bangumiData],
   );
 
-  const target = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { data, reload } = useInfiniteScroll<ResultT>(getList, {
-    target,
+    target: scrollContainerRef,
     isNoMore: (d) => d?.isNoMore ?? false,
     reloadDeps: [bangumiData],
   });
 
-  const bangumiList = useMemo(
-    () => (
-      <main
-        className="grid w-full grow grid-cols-[repeat(auto-fill,minmax(125px,1fr))] place-items-stretch content-start gap-2 overflow-y-scroll px-2"
-        ref={target}
-      >
-        {data?.list.map((item, index) => (
-          <Card
-            key={index}
-            bangumi={item}
-            currentBangumiState={[currentBangumi, setCurrentBangumi]}
-          />
-        ))}
-      </main>
-    ),
-    [currentBangumi, data?.list],
-  );
-
-  const keywordSearch = useMemo(
-    () => (
-      <input
-        className="w-[200px] border border-gray-400 bg-transparent p-2 leading-none outline-none"
-        type="text"
-        placeholder="TITLE / AUTHOR / INFO"
-        value={keyword}
-        onChange={(e) => {
-          setKeyword(e.target.value);
-          startTransition(() => {
-            setCurrentBangumi(undefined);
-            reload();
-          });
-        }}
-      />
-    ),
-    [keyword, reload, setCurrentBangumi],
+  const updateParams = useCallback(
+    <K extends keyof ParamsT>(params: Pick<ParamsT, K>) => {
+      setParams(params);
+      startTransition(() => {
+        setCurrentBangumi(undefined);
+        reload();
+      });
+    },
+    [reload, setCurrentBangumi, setParams],
   );
 
   const startYears = useMemo(() => {
@@ -121,67 +110,16 @@ const useBangumi = () => {
     }
   }, [rawData]);
 
-  const startSearch = useMemo(
-    () => (
-      <select
-        className={clsx(
-          "w-[80px] cursor-pointer appearance-none border border-gray-400 bg-transparent p-2 leading-none outline-none",
-          { "text-gray-400": start === "-", "border-gray-400": start === "-" },
-        )}
-        aria-label="year search"
-        value={start}
-        onChange={(e) => {
-          setStart(e.target.value);
-          startTransition(() => {
-            setCurrentBangumi(undefined);
-            reload();
-          });
-        }}
-      >
-        <option disabled value="-">
-          YEAR
-        </option>
-        {startYears.map((year, idx) => (
-          <option key={idx} value={year}>
-            {year}
-          </option>
-        ))}
-      </select>
-    ),
-    [reload, start, startYears],
-  );
-
-  const resetBtn = useMemo(
-    () => (
-      <button
-        className={clsx(
-          "w-[80px] cursor-pointer border border-gray-400 bg-transparent p-2 leading-none outline-none",
-          {
-            "text-gray-400":
-              bangumiData.length === rawData?.length || !rawData?.length,
-          },
-        )}
-        onClick={() => {
-          setKeyword("");
-          setStart("-");
-          setCurrentBangumi(undefined);
-          reload();
-        }}
-        disabled={bangumiData.length === rawData?.length}
-      >
-        RESET
-      </button>
-    ),
-    [bangumiData.length, rawData?.length, reload],
-  );
-
   return {
-    bangumiList,
-    keywordSearch,
-    startSearch,
-    resetBtn,
+    DEFAULT_PARAMS,
+    viewState,
+    scrollContainerRef,
+    data,
+    currentBangumiState,
+    startYears,
+    params,
+    updateParams,
     count: bangumiData.length,
-    disabled: !rawData ?? bangumiData.length === rawData?.length,
   };
 };
 

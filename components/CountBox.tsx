@@ -1,19 +1,23 @@
 import { clsx } from "clsx";
+import type { DetailedHTMLProps, InputHTMLAttributes } from "react";
 
-interface Props {
-  disabled?: boolean;
-  children?: React.ReactNode;
-}
-
-export const CountBox = ({ disabled = true, children = 0 }: Props) => {
+export const CountBox = ({
+  disabled,
+  ...props
+}: DetailedHTMLProps<
+  InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+>) => {
   return (
-    <div
+    <input
       className={clsx(
-        "w-[50px] cursor-default select-none p-2 text-right leading-none",
+        "pointer-events-none w-[50px] cursor-default select-none appearance-none bg-transparent p-2 text-right leading-none",
         { "text-gray-400": disabled },
       )}
-    >
-      {children}
-    </div>
+      tabIndex={-1}
+      readOnly
+      aria-readonly
+      {...props}
+    />
   );
 };
