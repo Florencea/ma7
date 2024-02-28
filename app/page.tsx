@@ -14,7 +14,6 @@ import {
   Image,
   Item,
   LabeledValue,
-  Link,
   Picker,
   Provider,
   SearchField,
@@ -122,17 +121,19 @@ export default function Page() {
 
   return (
     <Provider theme={defaultTheme}>
-      <title>{`MA7 - ${bangumiData.length} items`}</title>
+      <title>{`MA7 - ${bangumiData.length} 部番組`}</title>
       <Flex height="100svh" direction="column">
         <View padding="size-100">
-          <Flex gap="size-100" justifyContent="center" alignItems="center" wrap>
+          <Flex gap="size-100" justifyContent="center" alignItems="end" wrap>
             <SearchField
-              aria-label="keyword"
+              label="以關鍵字篩選"
+              aria-label="以關鍵字篩選"
               value={params.keyword}
               onChange={(value) => updateParams({ keyword: value })}
             />
             <Picker
-              aria-label="year"
+              label="以年份篩選"
+              aria-label="以年份篩選"
               width={120}
               disabledKeys={DEFAULT_PARAMS.start}
               selectedKey={params.start}
@@ -140,21 +141,22 @@ export default function Page() {
             >
               {startYears.map((year) => (
                 <Item key={year}>
-                  {year === DEFAULT_PARAMS.start ? "YEAR" : year}
+                  {year === DEFAULT_PARAMS.start ? "請選擇年份" : year}
                 </Item>
               ))}
             </Picker>
             <ActionButton onPress={() => updateParams(DEFAULT_PARAMS)}>
-              Reset
+              重置
             </ActionButton>
           </Flex>
         </View>
-        <main className="grow overflow-y-scroll" ref={scrollContainerRef}>
+        <main className="grow overflow-y-scroll pt-1" ref={scrollContainerRef}>
           <Grid columns="repeat(auto-fill,minmax(125px,1fr))">
             {data?.list.map((bangumi, index) => {
               return (
                 <DialogTrigger key={index} type="popover">
                   <ActionButton
+                    aria-label={`展開番組${bangumi.title}詳細資訊`}
                     isQuiet
                     position="relative"
                     width="auto"
@@ -163,7 +165,7 @@ export default function Page() {
                     <Flex direction="column">
                       <Image
                         src={`/img/${bangumi.id}.avif`}
-                        alt={bangumi.title}
+                        alt={`番組${bangumi.title}圖片`}
                       />
                     </Flex>
                   </ActionButton>
@@ -193,24 +195,28 @@ export default function Page() {
                           padding="size-100"
                         >
                           <Flex justifyContent="center" gap="size-200">
-                            <Link
+                            <Button
+                              aria-label={`前往番組${bangumi.title}官方網站`}
+                              variant="primary"
+                              style="fill"
                               target="_blank"
                               rel="noreferrer"
                               href={bangumi.site}
+                              elementType="a"
                             >
-                              <Button variant="primary" style="fill">
-                                官方網站
-                              </Button>
-                            </Link>
-                            <Link
+                              官方網站
+                            </Button>
+                            <Button
+                              aria-label={`前往番組${bangumi.title}myself-bbs.com網頁`}
+                              variant="accent"
+                              style="fill"
                               target="_blank"
                               rel="noreferrer"
                               href={`https://myself-bbs.com/thread-${bangumi.id}-1-1.html`}
+                              elementType="a"
                             >
-                              <Button variant="accent" style="fill">
-                                前往網頁
-                              </Button>
-                            </Link>
+                              前往網頁
+                            </Button>
                           </Flex>
                         </View>
                         <View
