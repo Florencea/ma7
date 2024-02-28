@@ -4,10 +4,16 @@ import type { FullBangumiT } from "@/crawler/crawler-storage";
 import {
   ActionButton,
   Button,
+  Content,
+  Dialog,
+  DialogTrigger,
+  Divider,
   Flex,
-  Footer,
   Grid,
+  Heading,
+  Image,
   Item,
+  LabeledValue,
   Link,
   Picker,
   Provider,
@@ -17,8 +23,7 @@ import {
   defaultTheme,
 } from "@adobe/react-spectrum";
 import { useInfiniteScroll, useSetState } from "ahooks";
-import { clsx } from "clsx";
-import { useCallback, useMemo, useRef, useState, useTransition } from "react";
+import { useCallback, useMemo, useRef, useTransition } from "react";
 import useSWR from "swr";
 
 interface ParamsT {
@@ -34,23 +39,18 @@ interface ResultT {
 
 type BangumiT = Omit<FullBangumiT, "_end" | "_imgUrl">;
 
-type ViewStateT = "fetching" | "filtered" | "idle";
-
-const BANGUMIS_PER_PAGE = 12;
+const BANGUMIS_PER_PAGE = 36;
 
 const DEFAULT_PARAMS: ParamsT = { keyword: "", start: "-" };
 
 export default function Page() {
-  const { data: rawData, isLoading } = useSWR<BangumiT[]>(
-    "/data.json",
-    (url: string) => fetch(url).then((res) => res.json()),
+  const { data: rawData } = useSWR<BangumiT[]>("/data.json", (url: string) =>
+    fetch(url).then((res) => res.json()),
   );
 
   const [, startTransition] = useTransition();
 
   const [params, setParams] = useSetState<ParamsT>(DEFAULT_PARAMS);
-
-  const [currentBangumi, setCurrentBangumi] = useState<BangumiT>();
 
   const bangumiData = useMemo(
     () =>
@@ -71,13 +71,6 @@ export default function Page() {
       }),
     [rawData, params.keyword, params.start],
   );
-
-  const viewState: ViewStateT =
-    isLoading || !rawData
-      ? "fetching"
-      : bangumiData.length === rawData.length
-        ? "idle"
-        : "filtered";
 
   const getList = useCallback(
     (d: ResultT | undefined): Promise<ResultT> => {
@@ -110,11 +103,10 @@ export default function Page() {
     <K extends keyof ParamsT>(params: Pick<ParamsT, K>) => {
       setParams(params);
       startTransition(() => {
-        setCurrentBangumi(undefined);
         reload();
       });
     },
-    [reload, setCurrentBangumi, setParams],
+    [reload, setParams],
   );
 
   const startYears = useMemo(() => {
@@ -132,8 +124,8 @@ export default function Page() {
     <Provider theme={defaultTheme}>
       <title>{`MA7 - ${bangumiData.length} items`}</title>
       <Flex height="100svh" direction="column">
-        <View padding="size-200">
-          <Flex gap="size-200" justifyContent="center" alignItems="center" wrap>
+        <View padding="size-100">
+          <Flex gap="size-100" justifyContent="center" alignItems="center" wrap>
             <SearchField
               aria-label="keyword"
               value={params.keyword}
@@ -152,123 +144,90 @@ export default function Page() {
                 </Item>
               ))}
             </Picker>
-            <ActionButton
-              isDisabled={viewState === "idle"}
-              onPress={() => updateParams(DEFAULT_PARAMS)}
-            >
+            <ActionButton onPress={() => updateParams(DEFAULT_PARAMS)}>
               Reset
             </ActionButton>
           </Flex>
         </View>
         <main className="grow overflow-y-scroll" ref={scrollContainerRef}>
-          <View paddingX="size-200">
-            <Grid columns="repeat(auto-fill,minmax(125px,1fr))" gap="size-200">
-              {data?.list.map((bangumi, index) => {
-                const open = currentBangumi?.id === bangumi.id;
-                return (
-                  <article
-                    key={index}
-                    className={clsx("flex h-full w-[125px] shrink-0 flex-col", {
-                      "w-auto": open,
-                      "w-[125px]": !open,
-                      "col-span-4": open,
-                      "row-span-3": open,
-                      "gap-3": open,
-                      "pr-1": open,
-                    })}
+          <Grid columns="repeat(auto-fill,minmax(125px,1fr))">
+            {data?.list.map((bangumi, index) => {
+              return (
+                <DialogTrigger key={index} type="popover">
+                  <ActionButton
+                    isQuiet
+                    position="relative"
+                    width="auto"
+                    height="auto"
                   >
-                    {!open ? (
-                      <>
-                        <picture
-                          className="h-[175px] w-[125px] shrink-0 cursor-pointer select-none"
-                          onClick={() => {
-                            setCurrentBangumi(bangumi);
-                          }}
-                        >
-                          <source
-                            srcSet={`/img/${bangumi.id}.avif`}
-                            type="image/avif"
+                    <Flex direction="column">
+                      <Image
+                        src={`/img/${bangumi.id}.avif`}
+                        alt={bangumi.title}
+                      />
+                    </Flex>
+                  </ActionButton>
+                  <Dialog aria-label="detail">
+                    <Heading>{bangumi.title}</Heading>
+                    <Divider />
+                    <Content>
+                      <Flex direction="column" gap="size-100">
+                        <Flex rowGap="size-100" columnGap="size-400" wrap>
+                          <LabeledValue
+                            label="狀態"
+                            value={`${bangumi.stat} ${bangumi.total}`}
                           />
-                          <img
-                            className="h-[175px] w-[125px] shrink-0 cursor-pointer select-none rounded"
-                            src={`/img/${bangumi.id}.avif`}
-                            alt={bangumi.title}
+                          <LabeledValue
+                            label="首播日期"
+                            value={bangumi.start}
                           />
-                        </picture>
-                        <h1
-                          className="mt-2 overflow-hidden text-ellipsis whitespace-nowrap"
-                          title={bangumi.title}
+                          <LabeledValue
+                            label="原著作者"
+                            value={bangumi.by === "" ? "-" : bangumi.by}
+                          />
+                        </Flex>
+                        <View
+                          borderWidth="thin"
+                          borderColor="dark"
+                          borderRadius="regular"
+                          padding="size-100"
                         >
-                          <Text>{bangumi.title}</Text>
-                        </h1>
-                        <h2
-                          className="overflow-hidden text-ellipsis whitespace-nowrap text-gray-400"
-                          title={bangumi.stat}
+                          <Flex justifyContent="center" gap="size-200">
+                            <Link
+                              target="_blank"
+                              rel="noreferrer"
+                              href={bangumi.site}
+                            >
+                              <Button variant="primary" style="fill">
+                                官方網站
+                              </Button>
+                            </Link>
+                            <Link
+                              target="_blank"
+                              rel="noreferrer"
+                              href={`https://myself-bbs.com/thread-${bangumi.id}-1-1.html`}
+                            >
+                              <Button variant="accent" style="fill">
+                                前往網頁
+                              </Button>
+                            </Link>
+                          </Flex>
+                        </View>
+                        <View
+                          borderWidth="thin"
+                          borderColor="dark"
+                          borderRadius="regular"
+                          padding="size-100"
                         >
-                          <Text>{bangumi.stat}</Text>
-                        </h2>
-                      </>
-                    ) : (
-                      <>
-                        <header className="flex">
-                          <picture
-                            className="h-[350px] w-[250px] shrink-0 cursor-pointer select-none rounded"
-                            onClick={() => {
-                              setCurrentBangumi(undefined);
-                            }}
-                          >
-                            <source
-                              srcSet={`/img/${bangumi.id}.avif`}
-                              type="image/avif"
-                            />
-                            <img
-                              className="h-[350px] w-[250px] shrink-0 cursor-pointer select-none rounded"
-                              src={`/img/${bangumi.id}.avif`}
-                              alt={bangumi.title}
-                            />
-                          </picture>
-                          <section className="flex grow flex-col justify-between gap-2 px-3">
-                            <ul className="flex grow list-none flex-col gap-1">
-                              <li>{bangumi.title}</li>
-                              <li>
-                                {bangumi.stat} {bangumi.total}
-                              </li>
-                              <li>首播日期: {bangumi.start}</li>
-                              <li>原著作者: {bangumi.by}</li>
-                              <li>
-                                官方網站:{" "}
-                                <Link
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  href={bangumi.site}
-                                >
-                                  {bangumi.site}
-                                </Link>
-                              </li>
-                            </ul>
-                            <Footer>
-                              <Flex justifyContent="end">
-                                <Link
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  href={`https://myself-bbs.com/thread-${bangumi.id}-1-1.html`}
-                                >
-                                  <Button variant="primary">前往網頁</Button>
-                                </Link>
-                              </Flex>
-                            </Footer>
-                          </section>
-                        </header>
-                        <section className="grow leading-relaxed">
                           <Text>{bangumi.info}</Text>
-                        </section>
-                      </>
-                    )}
-                  </article>
-                );
-              })}
-            </Grid>
-          </View>
+                        </View>
+                      </Flex>
+                    </Content>
+                  </Dialog>
+                </DialogTrigger>
+              );
+            })}
+          </Grid>
         </main>
       </Flex>
     </Provider>
