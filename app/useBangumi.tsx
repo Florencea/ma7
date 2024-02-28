@@ -92,20 +92,6 @@ const useBangumi = () => {
     [currentBangumi, data?.list],
   );
 
-  const countBox = useMemo(
-    () => (
-      <div
-        className={clsx(
-          "w-[50px] cursor-default select-none p-2 text-right leading-none",
-          { "text-gray-400": bangumiData.length === rawData?.length },
-        )}
-      >
-        {bangumiData.length}
-      </div>
-    ),
-    [bangumiData.length, rawData?.length],
-  );
-
   const keywordSearch = useMemo(
     () => (
       <input
@@ -191,10 +177,11 @@ const useBangumi = () => {
 
   return {
     bangumiList,
-    countBox,
     keywordSearch,
     startSearch,
     resetBtn,
+    count: bangumiData.length,
+    disabled: !rawData ?? bangumiData.length === rawData?.length,
   };
 };
 
