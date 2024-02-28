@@ -158,7 +158,12 @@ export default function Page() {
           <Grid columns="repeat(auto-fill,minmax(125px,1fr))" gap="size-100">
             {data?.list.map((bangumi, index) => {
               return (
-                <DialogTrigger key={index} type="popover" isDismissable>
+                <DialogTrigger
+                  key={index}
+                  type="popover"
+                  mobileType="tray"
+                  isDismissable
+                >
                   <Flex direction="column" gap="size-100">
                     <picture>
                       <source srcSet={`/img/${bangumi.id}.avif`} />
