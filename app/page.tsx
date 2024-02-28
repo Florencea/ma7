@@ -11,13 +11,14 @@ import {
   Flex,
   Grid,
   Heading,
-  Image,
   Item,
   LabeledValue,
   Picker,
   Provider,
   SearchField,
   Text,
+  Tooltip,
+  TooltipTrigger,
   View,
   defaultTheme,
 } from "@adobe/react-spectrum";
@@ -150,25 +151,30 @@ export default function Page() {
             </ActionButton>
           </Flex>
         </View>
-        <main className="grow overflow-y-scroll pt-1" ref={scrollContainerRef}>
-          <Grid columns="repeat(auto-fill,minmax(125px,1fr))">
+        <main
+          className="grow overflow-y-scroll px-3 pt-1"
+          ref={scrollContainerRef}
+        >
+          <Grid columns="repeat(auto-fill,minmax(125px,1fr))" gap="size-100">
             {data?.list.map((bangumi, index) => {
               return (
-                <DialogTrigger key={index} type="popover">
-                  <ActionButton
-                    aria-label={`展開番組${bangumi.title}詳細資訊`}
-                    isQuiet
-                    position="relative"
-                    width="auto"
-                    height="auto"
-                  >
-                    <Flex direction="column">
-                      <Image
+                <DialogTrigger key={index} type="popover" isDismissable>
+                  <Flex direction="column" gap="size-100">
+                    <picture>
+                      <source srcSet={`/img/${bangumi.id}.avif`} />
+                      <img
+                        className="rounded"
                         src={`/img/${bangumi.id}.avif`}
-                        alt={`番組${bangumi.title}圖片`}
+                        alt={`${bangumi.title}圖片`}
                       />
-                    </Flex>
-                  </ActionButton>
+                    </picture>
+                    <TooltipTrigger>
+                      <ActionButton aria-label={`展開${bangumi.title}詳細資訊`}>
+                        <Text>{bangumi.title}</Text>
+                      </ActionButton>
+                      <Tooltip>{bangumi.title}</Tooltip>
+                    </TooltipTrigger>
+                  </Flex>
                   <Dialog aria-label="detail">
                     <Heading>{bangumi.title}</Heading>
                     <Divider />
@@ -196,7 +202,7 @@ export default function Page() {
                         >
                           <Flex justifyContent="center" gap="size-200">
                             <Button
-                              aria-label={`前往番組${bangumi.title}官方網站`}
+                              aria-label={`前往${bangumi.title}官方網站`}
                               variant="primary"
                               style="fill"
                               target="_blank"
@@ -207,7 +213,7 @@ export default function Page() {
                               官方網站
                             </Button>
                             <Button
-                              aria-label={`前往番組${bangumi.title}myself-bbs.com網頁`}
+                              aria-label={`前往${bangumi.title}myself-bbs.com網頁`}
                               variant="accent"
                               style="fill"
                               target="_blank"
