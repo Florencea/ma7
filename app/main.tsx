@@ -25,7 +25,6 @@ import {
 } from "@adobe/react-spectrum";
 import { useBoolean, useInfiniteScroll, useSetState } from "ahooks";
 import { useCallback, useMemo, useRef, useTransition } from "react";
-import useSWR from "swr";
 
 interface ParamsT {
   keyword: string;
@@ -44,13 +43,7 @@ export const BANGUMIS_PER_PAGE = 36;
 
 const DEFAULT_PARAMS: ParamsT = { keyword: "", start: "-" };
 
-export const Main = ({ fallbackData }: { fallbackData: BangumiT[] }) => {
-  const { data: rawData } = useSWR<BangumiT[]>(
-    "/data.json",
-    (url: string) => fetch(url).then((res) => res.json()),
-    { fallbackData },
-  );
-
+export const Main = ({ rawData }: { rawData: BangumiT[] }) => {
   const [, startTransition] = useTransition();
 
   const [params, setParams] = useSetState<ParamsT>(DEFAULT_PARAMS);

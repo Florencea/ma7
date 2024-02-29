@@ -13,7 +13,7 @@ export default async function Page() {
         href={`/img/${data?.[0].id}.avif`}
         type="image/avif"
       />
-      <Main fallbackData={data} />
+      <Main rawData={data} />
     </>
   );
 }
