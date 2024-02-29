@@ -13,6 +13,9 @@
 - Search instantly on typing by title, author, year, info
 - Update daily on 5:00 GMT+8 use GitHub Actions and deploy to Cloudflare Pages
 - Cache images in GitHub Actions for fast rebuild
+- Really high performance!
+
+![lighthouse](lighthouse.avif)
 
 ## Docs
 
