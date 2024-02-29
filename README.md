@@ -24,5 +24,4 @@
 - [ahooks/useInfiniteScroll](https://ahooks.js.org/hooks/use-infinite-scroll)
 - [Crawlee](https://crawlee.dev/)
 - [Sharp](https://sharp.pixelplumbing.com/)
-- [SWR](https://swr.vercel.app/)
 - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/index.html)
