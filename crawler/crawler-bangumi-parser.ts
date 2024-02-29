@@ -30,6 +30,7 @@ export class BangumiParser {
     [48332, "2022-07-07"],
     [49522, "2023-04-09"],
     [44864, "2006-04-06"],
+    [44871, "2014-07-07"],
   ]);
   constructor(
     request: Request,
