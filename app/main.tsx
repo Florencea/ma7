@@ -4,6 +4,7 @@ import type { FullBangumiT } from "@/crawler/crawler-storage";
 import {
   ActionButton,
   Button,
+  ButtonGroup,
   Content,
   Dialog,
   DialogTrigger,
@@ -206,48 +207,34 @@ export const Main = ({ fallbackData }: { fallbackData: BangumiT[] }) => {
                             label="原著作者"
                             value={bangumi.by === "" ? "-" : bangumi.by}
                           />
+                          <LabeledValue label="簡介" value={bangumi.info} />
                         </Flex>
-                        <View
-                          borderWidth="thin"
-                          borderColor="dark"
-                          borderRadius="regular"
-                          padding="size-100"
-                        >
-                          <Flex justifyContent="center" gap="size-200">
-                            <Button
-                              aria-label={`前往${bangumi.title}官方網站`}
-                              variant="primary"
-                              style="fill"
-                              target="_blank"
-                              rel="noreferrer"
-                              href={bangumi.site}
-                              elementType="a"
-                              isDisabled={!dialogLinkEnable}
-                            >
-                              官方網站
-                            </Button>
-                            <Button
-                              aria-label={`前往${bangumi.title}myself-bbs.com網頁`}
-                              variant="accent"
-                              style="fill"
-                              target="_blank"
-                              rel="noreferrer"
-                              href={`https://myself-bbs.com/thread-${bangumi.id}-1-1.html`}
-                              elementType="a"
-                              isDisabled={!dialogLinkEnable}
-                            >
-                              前往網頁
-                            </Button>
-                          </Flex>
-                        </View>
-                        <View
-                          borderWidth="thin"
-                          borderColor="dark"
-                          borderRadius="regular"
-                          padding="size-100"
-                        >
-                          <Text>{bangumi.info}</Text>
-                        </View>
+                        <ButtonGroup align="center">
+                          <Button
+                            aria-label={`前往${bangumi.title}官方網站`}
+                            variant="primary"
+                            style="fill"
+                            target="_blank"
+                            rel="noreferrer"
+                            href={bangumi.site}
+                            elementType="a"
+                            isDisabled={!dialogLinkEnable}
+                          >
+                            官方網站
+                          </Button>
+                          <Button
+                            aria-label={`前往${bangumi.title}myself-bbs.com網頁`}
+                            variant="accent"
+                            style="fill"
+                            target="_blank"
+                            rel="noreferrer"
+                            href={`https://myself-bbs.com/thread-${bangumi.id}-1-1.html`}
+                            elementType="a"
+                            isDisabled={!dialogLinkEnable}
+                          >
+                            前往網頁
+                          </Button>
+                        </ButtonGroup>
                       </Flex>
                     </Content>
                   </Dialog>
