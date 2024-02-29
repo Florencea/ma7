@@ -2,7 +2,7 @@ import { LocalizedStringProvider } from "@adobe/react-spectrum/i18n";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
-import "./global.css";
+import "tailwindcss/tailwind.css";
 
 const inter = Inter({
   subsets: ["latin"],
