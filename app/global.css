@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 [role="button"],
+[role="option"],
 button {
   cursor: pointer !important;
 }
