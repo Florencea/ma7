@@ -1,9 +1,15 @@
-import { readFile } from "fs/promises";
+import { readFile } from "node:fs/promises";
 import { Main, type BangumiT } from "./main";
 
-export default async function Page() {
-  const text = await readFile("public/data.json", { encoding: "utf-8" });
-  const data: BangumiT[] = JSON.parse(text);
+const Page = async () => {
+  let data: BangumiT[] = [];
+  if (process.env.NODE_ENV === "production") {
+    const text = await readFile("public/data.json", { encoding: "utf-8" });
+    data = JSON.parse(text);
+  } else {
+    const res = await fetch("https://ma7.pages.dev/data.json");
+    data = await res.json();
+  }
   return (
     <>
       <link
@@ -16,4 +22,6 @@ export default async function Page() {
       <Main rawData={data} />
     </>
   );
-}
+};
+
+export default Page;

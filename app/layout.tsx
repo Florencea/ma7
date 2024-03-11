@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "MA7",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
     <html lang="zh-TW">
       <body id="__next">
@@ -17,4 +17,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;
