@@ -39,7 +39,7 @@ interface ResultT {
 
 export type BangumiT = Omit<FullBangumiT, "_end" | "_imgUrl">;
 
-export const BANGUMIS_PER_PAGE = 36;
+export const BANGUMIS_PER_PAGE = 50;
 
 const DEFAULT_PARAMS: ParamsT = { keyword: "", start: "-" };
 
