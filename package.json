@@ -10,32 +10,32 @@
     "crawl": "tsc --project crawler/tsconfig.json && node crawler/crawler.js"
   },
   "dependencies": {
-    "@adobe/react-spectrum": "^3.35.1",
-    "@react-aria/optimize-locales-plugin": "^1.1.1",
+    "@adobe/react-spectrum": "^3.37.1",
+    "@react-aria/optimize-locales-plugin": "^1.1.2",
     "@types/cheerio": "^0.22.35",
     "@types/got": "^9.6.12",
-    "@types/react": "^18.3.3",
-    "ahooks": "^3.8.0",
-    "autoprefixer": "^10.4.19",
+    "@types/react": "^18.3.12",
+    "ahooks": "^3.8.1",
+    "autoprefixer": "^10.4.20",
     "clsx": "^2.1.1",
-    "crawlee": "^3.11.0",
-    "dayjs": "^1.11.11",
-    "next": "^14.2.5",
-    "postcss": "^8.4.39",
+    "crawlee": "^3.11.5",
+    "dayjs": "^1.11.13",
+    "next": "^15.0.1",
+    "postcss": "^8.4.47",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sharp": "^0.33.4",
-    "tailwindcss": "^3.4.4",
-    "typescript": "^5.5.3",
-    "wrangler": "^3.64.0"
+    "sharp": "^0.33.5",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3",
+    "wrangler": "^3.83.0"
   },
   "devDependencies": {
-    "@types/node": "^20.14.10",
-    "@types/react-dom": "^18.3.0",
-    "eslint": "^8.57.0",
-    "eslint-config-next": "^14.2.5",
+    "@types/node": "^22.8.1",
+    "@types/react-dom": "^18.3.1",
+    "eslint": "^9.13.0",
+    "eslint-config-next": "^15.0.1",
     "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.3.2",
-    "prettier-plugin-tailwindcss": "^0.6.5"
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.8"
   }
 }

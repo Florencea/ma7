@@ -5,7 +5,7 @@
     "noEmit": false,
     "esModuleInterop": true,
     "module": "CommonJS",
-    "moduleResolution": "Node10",
+    "moduleResolution": "Node10"
   },
-  "include": ["crawler.ts"],
+  "include": ["crawler.ts"]
 }
