@@ -1,0 +1,52 @@
+name: Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - "main"
+  # GitHub Actions use UTC time, so 21:00 means 5:00 UTC +8 Timezone
+  schedule:
+    - cron: "0 21 * * *"
+  workflow_run:
+    workflows:
+      - Upgrade
+    types:
+      - completed
+  workflow_dispatch:
+
+env:
+  NODE_ENV: production
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ma7-${{ runner.os }}
+
+      - name: Fetch data
+        run: npm run crawl
+
+      - name: Build site
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        run: |
+          export CLOUDFLARE_API_TOKEN=${{ secrets.CLOUDFLARE_API_TOKEN }}
+          export CLOUDFLARE_ACCOUNT_ID=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          npx wrangler pages deploy out --project-name=ma7 --branch=main
