@@ -1,9 +1,12 @@
+import localesPlugin from "@react-aria/optimize-locales-plugin";
+
 // @ts-check
 
 const isDev = !(process.env.NODE_ENV === "production");
-const localesPlugin = require("@react-aria/optimize-locales-plugin");
 
-/** @type {import('next').NextConfig} */
+/**
+ * @type {import('next').NextConfig}
+ */
 const nextConfig = {
   output: isDev ? undefined : "export",
   reactStrictMode: true,
@@ -89,4 +92,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

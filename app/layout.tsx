@@ -1,7 +1,7 @@
 import { LocalizedStringProvider } from "@adobe/react-spectrum/i18n";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import "tailwindcss/tailwind.css";
+import "./global.css";
 
 export const metadata: Metadata = {
   title: "MA7",
