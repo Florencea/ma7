@@ -30,7 +30,7 @@
     "wrangler": "^3.114.2"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/eslintrc": "^3.3.1",
     "@types/node": "^22.13.10",
     "@types/react-dom": "^19.0.4",
     "eslint": "^9.22.0",
