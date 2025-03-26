@@ -12,7 +12,7 @@
   "dependencies": {
     "@adobe/react-spectrum": "^3.40.1",
     "@react-aria/optimize-locales-plugin": "^1.1.4",
-    "@tailwindcss/postcss": "^4.0.16",
+    "@tailwindcss/postcss": "^4.0.17",
     "@types/cheerio": "^0.22.35",
     "@types/got": "^9.6.12",
     "@types/react": "^19.0.12",
