@@ -27,7 +27,7 @@
     "sharp": "^0.33.5",
     "tailwindcss": "^4.0.17",
     "typescript": "^5.8.2",
-    "wrangler": "^4.5.0"
+    "wrangler": "^4.5.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
