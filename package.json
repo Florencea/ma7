@@ -13,10 +13,11 @@
     "@adobe/react-spectrum": "^3.41.0",
     "@react-aria/optimize-locales-plugin": "^1.1.4",
     "@tailwindcss/postcss": "^4.1.6",
-    "@types/cheerio": "^1.0.0",
+    "@types/cheerio": "^0.22.35",
     "@types/got": "^9.6.12",
     "@types/react": "^19.1.4",
     "ahooks": "^3.8.4",
+    "cheerio": "^1.0.0",
     "clsx": "^2.1.1",
     "crawlee": "^3.13.3",
     "dayjs": "^1.11.13",
@@ -43,6 +44,11 @@
     "ahooks": {
       "react": "^19.0.0",
       "react-dom": "^19.0.0"
+    },
+    "crawlee": {
+      "@crawlee/cheerio": {
+        "cheerio": "$cheerio"
+      }
     }
   },
   "engines": {
