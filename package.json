@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@adobe/react-spectrum": "^3.42.0",
-    "@react-aria/optimize-locales-plugin": "^1.1.4",
+    "@react-aria/optimize-locales-plugin": "^1.1.5",
     "@tailwindcss/postcss": "^4.1.7",
     "@types/cheerio": "^0.22.35",
     "@types/got": "^9.6.12",
