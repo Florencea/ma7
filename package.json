@@ -10,7 +10,7 @@
     "crawl": "tsc --project crawler/tsconfig.json && node crawler/crawler.js"
   },
   "dependencies": {
-    "@adobe/react-spectrum": "^3.42.0",
+    "@adobe/react-spectrum": "^3.42.1",
     "@react-aria/optimize-locales-plugin": "^1.1.5",
     "@tailwindcss/postcss": "^4.1.8",
     "@types/cheerio": "^0.22.35",
