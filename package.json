@@ -15,7 +15,7 @@
     "@tailwindcss/postcss": "^4.1.8",
     "@types/cheerio": "^0.22.35",
     "@types/got": "^9.6.12",
-    "@types/react": "^19.1.6",
+    "@types/react": "^19.1.7",
     "ahooks": "^3.8.5",
     "cheerio": "^1.1.0",
     "clsx": "^2.1.1",
