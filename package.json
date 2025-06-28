@@ -16,7 +16,7 @@
     "@types/cheerio": "^0.22.35",
     "@types/got": "^9.6.12",
     "@types/react": "^19.1.8",
-    "ahooks": "^3.8.5",
+    "ahooks": "^3.9.0",
     "cheerio": "^1.1.0",
     "clsx": "^2.1.1",
     "crawlee": "^3.13.9",
